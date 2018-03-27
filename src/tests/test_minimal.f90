@@ -15,23 +15,23 @@ program test_minimal
 !<
 !<Note that `get` automatically calls `parse` method beacuse it is not explicitely called.
 !-----------------------------------------------------------------------------------------------------------------------------------
-use flap, only : command_line_interface
-use penf
+   use flap, only: command_line_interface
+   use penf
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
-implicit none
-type(command_line_interface) :: cli    !< Command Line Interface (CLI).
-character(99)                :: string !< String value.
-integer(I4P)                 :: error  !< Error trapping flag.
+   implicit none
+   type(command_line_interface) :: cli    !< Command Line Interface (CLI).
+   character(99)                :: string !< String value.
+   integer(I4P)                 :: error  !< Error trapping flag.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
-call cli%init(description = 'minimal FLAP example')
-call cli%add(switch='--string', switch_ab='-s', help='a string', required=.true., act='store', error=error) ; if (error/=0) stop
-call cli%get(switch='-s', val=string, error=error) ; if (error/=0) stop
-print '(A)', cli%progname//' has been called with the following argument:'
-print '(A)', 'String = '//trim(adjustl(string))
-stop
+   call cli%init(description='minimal FLAP example')
+   call cli%add(switch='--string', switch_ab='-s', help='a string', required=.true., act='store', error=error); if (error /= 0) stop
+   call cli%get(switch='-s', val=string, error=error); if (error /= 0) stop
+   print '(A)', cli%progname//' has been called with the following argument:'
+   print '(A)', 'String = '//trim(adjustl(string))
+   stop
 !-----------------------------------------------------------------------------------------------------------------------------------
 endprogram test_minimal
