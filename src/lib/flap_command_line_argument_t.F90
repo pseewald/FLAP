@@ -740,43 +740,43 @@ contains
       call tokenize(strin=tmp, delimiter=',', toks=toks, Nt=Nc)
       select type (val)
 #ifdef r16p
-      type is (real (R16P))
+      type is (real(R16P))
          val_str = str(n=val)
          do c = 1, Nc
             if (val == cton(str=trim(adjustl(toks(c))), knd=1._R16P)) val_in = .true.
          enddo
 #endif
-      type is (real (R8P))
+      type is (real(R8P))
          val_str = str(n=val)
          do c = 1, Nc
             if (val == cton(str=trim(adjustl(toks(c))), knd=1._R8P)) val_in = .true.
          enddo
-      type is (real (R4P))
+      type is (real(R4P))
          val_str = str(n=val)
          do c = 1, Nc
             if (val == cton(str=trim(adjustl(toks(c))), knd=1._R4P)) val_in = .true.
          enddo
-      type is (integer (I8P))
+      type is (integer(I8P))
          val_str = str(n=val)
          do c = 1, Nc
             if (val == cton(str=trim(adjustl(toks(c))), knd=1_I8P)) val_in = .true.
          enddo
-      type is (integer (I4P))
+      type is (integer(I4P))
          val_str = str(n=val)
          do c = 1, Nc
             if (val == cton(str=trim(adjustl(toks(c))), knd=1_I4P)) val_in = .true.
          enddo
-      type is (integer (I2P))
+      type is (integer(I2P))
          val_str = str(n=val)
          do c = 1, Nc
             if (val == cton(str=trim(adjustl(toks(c))), knd=1_I2P)) val_in = .true.
          enddo
-      type is (integer (I1P))
+      type is (integer(I1P))
          val_str = str(n=val)
          do c = 1, Nc
             if (val == cton(str=trim(adjustl(toks(c))), knd=1_I1P)) val_in = .true.
          enddo
-      type is (character (*))
+      type is (character(*))
          val_str = val
          do c = 1, Nc
             if (val == toks(c)) val_in = .true.
@@ -881,25 +881,25 @@ contains
       !---------------------------------------------------------------------------------------------------------------------------------
       select type (val)
 #ifdef r16p
-      type is (real (R16P))
+      type is (real(R16P))
          val = cton(pref=pref, error=self%error, str=trim(adjustl(buffer)), knd=1._R16P)
 #endif
-      type is (real (R8P))
+      type is (real(R8P))
          val = cton(pref=pref, error=self%error, str=trim(adjustl(buffer)), knd=1._R8P)
-      type is (real (R4P))
+      type is (real(R4P))
          val = cton(pref=pref, error=self%error, str=trim(adjustl(buffer)), knd=1._R4P)
-      type is (integer (I8P))
+      type is (integer(I8P))
          val = cton(pref=pref, error=self%error, str=trim(adjustl(buffer)), knd=1_I8P)
-      type is (integer (I4P))
+      type is (integer(I4P))
          val = cton(pref=pref, error=self%error, str=trim(adjustl(buffer)), knd=1_I4P)
-      type is (integer (I2P))
+      type is (integer(I2P))
          val = cton(pref=pref, error=self%error, str=trim(adjustl(buffer)), knd=1_I2P)
-      type is (integer (I1P))
+      type is (integer(I1P))
          val = cton(pref=pref, error=self%error, str=trim(adjustl(buffer)), knd=1_I1P)
       type is (logical)
          read (buffer, *, iostat=self%error) val
          if (self%error /= 0) call self%errored(pref=pref, error=ERROR_CASTING_LOGICAL, log_value=buffer)
-      type is (character (*))
+      type is (character(*))
          val = buffer
       endselect
       return
@@ -983,44 +983,44 @@ contains
       call tokenize(strin=buffer, delimiter=args_sep, toks=vals, Nt=Nv)
       select type (val)
 #ifdef r16p
-      type is (real (R16P))
+      type is (real(R16P))
          do v = 1, Nv
             val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(vals(v))), knd=1._R16P)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)
             if (self%error /= 0) exit
          enddo
 #endif
-      type is (real (R8P))
+      type is (real(R8P))
          do v = 1, Nv
             val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(vals(v))), knd=1._R8P)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)
             if (self%error /= 0) exit
          enddo
-      type is (real (R4P))
+      type is (real(R4P))
          do v = 1, Nv
             val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(vals(v))), knd=1._R4P)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)
             if (self%error /= 0) exit
          enddo
-      type is (integer (I8P))
+      type is (integer(I8P))
          do v = 1, Nv
             val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(vals(v))), knd=1_I8P)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)
             if (self%error /= 0) exit
          enddo
-      type is (integer (I4P))
+      type is (integer(I4P))
          do v = 1, Nv
             val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(vals(v))), knd=1_I4P)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)
             if (self%error /= 0) exit
          enddo
-      type is (integer (I2P))
+      type is (integer(I2P))
          do v = 1, Nv
             val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(vals(v))), knd=1_I2P)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)
             if (self%error /= 0) exit
          enddo
-      type is (integer (I1P))
+      type is (integer(I1P))
          do v = 1, Nv
             val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(vals(v))), knd=1_I1P)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)
@@ -1034,7 +1034,7 @@ contains
                exit
             endif
          enddo
-      type is (character (*))
+      type is (character(*))
          do v = 1, Nv
             val(v) = vals(v)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)

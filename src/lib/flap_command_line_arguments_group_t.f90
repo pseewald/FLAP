@@ -4,11 +4,11 @@ module flap_command_line_arguments_group_t
 !< Command Line Arguments Group (CLAsG) class.
 !-----------------------------------------------------------------------------------------------------------------------------------
    use flap_command_line_argument_t, only: command_line_argument, &
-      ACTION_PRINT_HELP, &
-      ACTION_PRINT_VERS, &
-      ACTION_STORE, &
-      ACTION_STORE_STAR, &
-      ARGS_SEP
+                                           ACTION_PRINT_HELP, &
+                                           ACTION_PRINT_VERS, &
+                                           ACTION_STORE, &
+                                           ACTION_STORE_STAR, &
+                                           ARGS_SEP
    use flap_object_t, only: object
    use penf
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -328,7 +328,7 @@ contains
                            endif
                         elseif (allocated(self%cla(a)%nargs)) then
                            self%cla(a)%val = ''
-                           select case (self%cla (a)%nargs)
+                           select case (self%cla(a)%nargs)
                            case ('+')
                               aaa = 0
                               do aa = arg + 1, size(args, dim=1)
