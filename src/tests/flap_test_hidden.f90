@@ -30,4 +30,4 @@ program flap_test_hidden
    print '(A)', 'String       = '//trim(adjustl(a_string))
    print '(A)', 'Ghost string = '//trim(adjustl(g_string))
    print '(A)', 'Integer      = '//trim(adjustl(str(a_integer, .true.)))
-endprogram flap_test_hidden
+end program flap_test_hidden

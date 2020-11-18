@@ -81,7 +81,7 @@ call cli%add(switch='--integer_ex',switch_ab='-ie',help='Exclusive integer input
    print '(A)', 'Integer list inputs:'
    do l = 1, 3
       print '(A)', 'Input('//trim(str(l, .true.))//') = '//trim(str(n=ilist(l)))
-   enddo
+   end do
    stop
 !-----------------------------------------------------------------------------------------------------------------------------------
-endprogram test_string
+end program test_string

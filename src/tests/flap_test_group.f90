@@ -94,5 +94,5 @@ contains
       call cli%get(group='new', switch='--grid', val=grid, error=error)
       if (error /= 0) stop
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine fake_call
-endprogram flap_test_group
+   end subroutine fake_call
+end program flap_test_group

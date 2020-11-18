@@ -16,4 +16,4 @@ module flap
    public :: command_line_arguments_group
    public :: command_line_interface
 !-----------------------------------------------------------------------------------------------------------------------------------
-endmodule flap
+end module flap

@@ -23,4 +23,4 @@ program test_choices_logical
    print "(A)", "Error code: "//trim(str(error, .true.))
    stop
 !-----------------------------------------------------------------------------------------------------------------------------------
-endprogram test_choices_logical
+end program test_choices_logical

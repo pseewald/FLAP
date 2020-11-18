@@ -90,7 +90,7 @@ module flap_command_line_argument_t
       procedure, private :: cla_assign_cla                  !< Assignment operator.
       generic, private :: assignment(=) => cla_assign_cla !< Assignment operator overloading.
       final              :: finalize                        !< Free dynamic memory when finalizing.
-   endtype command_line_argument
+   end type command_line_argument
 
 ! parameters
    character(len=*), parameter :: ACTION_STORE = 'STORE'         !< Store value (if invoked a value must be passed).
@@ -153,7 +153,7 @@ contains
       self%is_hidden = .false.
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine free
+   end subroutine free
 
    subroutine check(self, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -172,7 +172,7 @@ contains
       call self%check_positional_consistency(pref=pref)
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine check
+   end subroutine check
 
    function is_required_passed(self, pref) result(is_ok)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -188,10 +188,10 @@ contains
       if (((.not. self%is_passed) .and. self%is_required) .or. ((.not. self%is_passed) .and. (.not. allocated(self%def)))) then
          call self%errored(pref=pref, error=ERROR_MISSING_REQUIRED)
          is_ok = .false.
-      endif
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endfunction is_required_passed
+   end function is_required_passed
 
    subroutine raise_error_m_exclude(self, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -205,7 +205,7 @@ contains
       call self%errored(pref=pref, error=ERROR_M_EXCLUDE)
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine raise_error_m_exclude
+   end subroutine raise_error_m_exclude
 
    subroutine raise_error_nargs_insufficient(self, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -219,7 +219,7 @@ contains
       call self%errored(pref=pref, error=ERROR_NARGS_INSUFFICIENT)
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine raise_error_nargs_insufficient
+   end subroutine raise_error_nargs_insufficient
 
    subroutine raise_error_value_missing(self, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -233,7 +233,7 @@ contains
       call self%errored(pref=pref, error=ERROR_VALUE_MISSING)
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine raise_error_value_missing
+   end subroutine raise_error_value_missing
 
    subroutine raise_error_switch_unknown(self, switch, pref)
       !< Raise error switch_unknown.
@@ -242,7 +242,7 @@ contains
       character(*), optional, intent(in)    :: pref   !< Prefixing string.
 
       call self%errored(pref=pref, error=ERROR_UNKNOWN, switch=switch)
-   endsubroutine raise_error_switch_unknown
+   end subroutine raise_error_switch_unknown
 
    subroutine sanitize_defaults(self)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -262,12 +262,12 @@ contains
                ! replace white space separator with FLAP ARGS_SEP
                self%def = unique(string=self%def, substring=' ')
                self%def = replace_all(string=self%def, substring=' ', restring=ARGS_SEP)
-            endif
-         endif
-      endif
+            end if
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine sanitize_defaults
+   end subroutine sanitize_defaults
 
    function usage(self, pref, markdown)
       !< Get correct usage.
@@ -299,62 +299,62 @@ contains
                   case default
                      do a = 1, cton(str=trim(adjustl(self%nargs)), knd=1_I4P)
                         usage = usage//' value#'//trim(str(a, .true.))
-                     enddo
-                  endselect
+                     end do
+                  end select
                   if (trim(adjustl(self%switch)) /= trim(adjustl(self%switch_ab))) then
                      if (markdownd) then
                   usage = new_line('a')//'* `'//trim(adjustl(self%switch))//usage//'`, `'//trim(adjustl(self%switch_ab))//usage//'`'
                      else
                         usage = '   '//switch_//usage//', '//switch_ab_//usage
-                     endif
+                     end if
                   else
                      if (markdownd) then
                         usage = new_line('a')//'* `'//trim(adjustl(self%switch))//usage//'`'
                      else
                         usage = '   '//switch_//usage
-                     endif
-                  endif
+                     end if
+                  end if
                else
                   if (trim(adjustl(self%switch)) /= trim(adjustl(self%switch_ab))) then
                      if (markdownd) then
                 usage = new_line('a')//'* `'//trim(adjustl(self%switch))//' value`, `'//trim(adjustl(self%switch_ab))//' value'//'`'
                      else
                         usage = '   '//switch_//' value, '//switch_ab_//' value'
-                     endif
+                     end if
                   else
                      if (markdownd) then
                         usage = new_line('a')//'* `'//trim(adjustl(self%switch))//' value`'
                      else
                         usage = '   '//switch_//' value'
-                     endif
-                  endif
-               endif
+                     end if
+                  end if
+               end if
             else
                usage = '  value'
-            endif
+            end if
             if (allocated(self%choices)) then
                usage = usage//', value in: `'//self%choices//'`'
-            endif
+            end if
          elseif (self%act == action_store_star) then
             usage = '  [value]'
             if (allocated(self%choices)) then
                usage = usage//', value in: ('//self%choices//')'
-            endif
+            end if
          else
             if (trim(adjustl(self%switch)) /= trim(adjustl(self%switch_ab))) then
                if (markdownd) then
                   usage = new_line('a')//'* `'//trim(adjustl(self%switch))//'`, `'//trim(adjustl(self%switch_ab))//'`'
                else
                   usage = '   '//switch_//', '//switch_ab_
-               endif
+               end if
             else
                if (markdownd) then
                   usage = new_line('a')//'* `'//trim(adjustl(self%switch))//'`'
                else
                   usage = '   '//switch_
-               endif
-            endif
-         endif
+               end if
+            end if
+         end if
          prefd = ''; if (present(pref)) prefd = pref
          usage = prefd//usage
          if (self%is_positional) usage = usage//new_line('a')//prefd//repeat(' ', indent)//trim(str(self%position, .true.))// &
@@ -362,8 +362,8 @@ contains
          if (allocated(self%envvar)) then
             if (self%envvar /= '') then
                usage = usage//new_line('a')//prefd//repeat(' ', 10)//'environment variable name "'//trim(adjustl(self%envvar))//'"'
-            endif
-         endif
+            end if
+         end if
          if (.not. self%is_required) then
             if (self%def /= '') then
                if (markdownd) then
@@ -371,22 +371,22 @@ contains
              usage = usage//'  '//new_line('a')//prefd//repeat(' ', 4)//'default value '//trim(replace_all(self%def, ARGS_SEP, ' '))
                else
               usage = usage//new_line('a')//prefd//repeat(' ', indent)//'default value '//trim(replace_all(self%def, ARGS_SEP, ' '))
-               endif
-            endif
-         endif
+               end if
+            end if
+         end if
        if (self%m_exclude /= '') usage = usage//new_line('a')//prefd//repeat(' ', indent)//'mutually exclude "'//self%m_exclude//'"'
          if (markdownd) then
             usage = usage//'  '//new_line('a')//prefd//repeat(' ', 4)//trim(adjustl(self%help))
             if (self%help_markdown /= '') then
                usage = usage//trim(adjustl(self%help_markdown))
-            endif
+            end if
          else
             usage = usage//new_line('a')//prefd//repeat(' ', indent)//trim(adjustl(self%help))
-         endif
+         end if
       else
          usage = ''
-      endif
-   endfunction usage
+      end if
+   end function usage
 
    function signature(self)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -413,23 +413,23 @@ contains
                      signature = ''
                      do a = 1, nargs
                         signature = signature//' value#'//trim(str(a, .true.))
-                     enddo
-                  endselect
+                     end do
+                  end select
                else
                   signature = ' value'
-               endif
+               end if
                if (self%is_required) then
                   signature = ' '//trim(adjustl(self%switch))//signature
                else
                   signature = ' ['//trim(adjustl(self%switch))//signature//']'
-               endif
+               end if
             else
                if (self%is_required) then
                   signature = ' value'
                else
                   signature = ' [value]'
-               endif
-            endif
+               end if
+            end if
          elseif (self%act == action_store_star) then
             signature = ' [value]'
          else
@@ -437,14 +437,14 @@ contains
                signature = ' '//trim(adjustl(self%switch))
             else
                signature = ' ['//trim(adjustl(self%switch))//']'
-            endif
-         endif
+            end if
+         end if
       else
          signature = ''
-      endif
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endfunction signature
+   end function signature
 
    ! private methods
    subroutine errored(self, error, pref, switch, val_str, log_value)
@@ -467,7 +467,7 @@ contains
                self%error_message = prefd//': "'//trim(str(n=self%position))//'-th" positional option has not a default value!'
             else
                self%error_message = prefd//': named option "'//self%switch//'" has not a default value!'
-            endif
+            end if
          case (ERROR_REQUIRED_M_EXCLUDE)
             self%error_message = prefd//': named option "'//self%switch//'" cannot exclude others'// &
                                  ', it being required, only optional ones can!'
@@ -489,7 +489,7 @@ contains
                                     '-th" positional option must be chosen in:'
             else
                self%error_message = prefd//': value of named option "'//self%switch//'" must be chosen in: '
-            endif
+            end if
             self%error_message = self%error_message//'('//self%choices//')'
             self%error_message = self%error_message//' but "'//trim(val_str)//'" has been passed!'
          case (ERROR_MISSING_REQUIRED)
@@ -497,7 +497,7 @@ contains
                self%error_message = prefd//': named option "'//trim(adjustl(self%switch))//'" is required!'
             else
                self%error_message = prefd//': "'//trim(str(self%position, .true.))//'-th" positional option is required!'
-            endif
+            end if
          case (ERROR_CASTING_LOGICAL)
             self%error_message = prefd//': cannot convert "'//log_value//'" of option "'//self%switch//'" to logical type!'
          case (ERROR_CHOICES_LOGICAL)
@@ -510,7 +510,7 @@ contains
             else
                self%error_message = prefd//': "'//trim(str(self%position, .true.))//'-th" positional option '// &
                                     'has not "nargs" value but an array has been passed to "get" method!'
-            endif
+            end if
          case (ERROR_NARGS_INSUFFICIENT)
             if (.not. self%is_positional) then
                if (self%nargs == '+') then
@@ -519,7 +519,7 @@ contains
                else
                   self%error_message = prefd//': named option "'//trim(adjustl(self%switch))//'" requires '// &
                                        trim(adjustl(self%nargs))//' arguments but no enough ones remain!'
-               endif
+               end if
             else
                if (self%nargs == '+') then
                   self%error_message = prefd//': "'//trim(str(self%position, .true.))// &
@@ -527,8 +527,8 @@ contains
                else
                   self%error_message = prefd//': "'//trim(str(self%position, .true.))//'-th" positional option requires '// &
                                        trim(adjustl(self%nargs))//' arguments but no enough ones remain!'
-               endif
-            endif
+               end if
+            end if
          case (ERROR_VALUE_MISSING)
             self%error_message = prefd//': named option "'//trim(adjustl(self%switch))//'" needs a value that is not passed!'
          case (ERROR_UNKNOWN)
@@ -553,10 +553,10 @@ contains
                                  '" has "'//action_store_star//'" action that is not allowed for environment variable option!'
          case (ERROR_ACTION_UNKNOWN)
             self%error_message = prefd//': named option "'//trim(adjustl(self%switch))//'" has unknown "'//self%act//'" action!'
-         endselect
+         end select
          call self%print_error_message
-      endif
-   endsubroutine errored
+      end if
+   end subroutine errored
 
    subroutine check_envvar_consistency(self, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -571,7 +571,7 @@ contains
          if (self%is_positional) then
             call self%errored(pref=pref, error=ERROR_ENVVAR_POSITIONAL)
             return
-         endif
+         end if
          if (.not. allocated(self%act)) then
             call self%errored(pref=pref, error=ERROR_ENVVAR_NOT_STORE)
             return
@@ -579,16 +579,16 @@ contains
             if (self%act /= action_store) then
                call self%errored(pref=pref, error=ERROR_ENVVAR_NOT_STORE)
                return
-            endif
-         endif
+            end if
+         end if
          if (allocated(self%nargs)) then
             call self%errored(pref=pref, error=ERROR_ENVVAR_NARGS)
             return
-         endif
-      endif
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine check_envvar_consistency
+   end subroutine check_envvar_consistency
 
    subroutine check_action_consistency(self, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -603,15 +603,15 @@ contains
          if (self%act == ACTION_STORE_STAR .and. self%is_positional) then
             call self%errored(pref=pref, error=ERROR_STORE_STAR_POSITIONAL)
             return
-         endif
+         end if
          if (self%act == ACTION_STORE_STAR .and. allocated(self%nargs)) then
             call self%errored(pref=pref, error=ERROR_STORE_STAR_NARGS)
             return
-         endif
+         end if
          if (self%act == ACTION_STORE_STAR .and. allocated(self%envvar)) then
             call self%errored(pref=pref, error=ERROR_STORE_STAR_ENVVAR)
             return
-         endif
+         end if
          if (self%act /= ACTION_STORE .and. &
              self%act /= ACTION_STORE_STAR .and. &
              self%act /= ACTION_STORE_TRUE .and. &
@@ -620,11 +620,11 @@ contains
              self%act /= ACTION_PRINT_VERS) then
             call self%errored(pref=pref, error=ERROR_ACTION_UNKNOWN)
             return
-         endif
-      endif
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine check_action_consistency
+   end subroutine check_action_consistency
 
    subroutine check_optional_consistency(self, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -638,7 +638,7 @@ contains
       if ((.not. self%is_required) .and. (.not. allocated(self%def))) call self%errored(pref=pref, error=ERROR_OPTIONAL_NO_DEF)
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine check_optional_consistency
+   end subroutine check_optional_consistency
 
    subroutine check_m_exclude_consistency(self, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -652,14 +652,14 @@ contains
       if ((self%is_required) .and. (self%m_exclude /= '')) then
          call self%errored(pref=pref, error=ERROR_REQUIRED_M_EXCLUDE)
          return
-      endif
+      end if
       if ((self%is_positional) .and. (self%m_exclude /= '')) then
          call self%errored(pref=pref, error=ERROR_POSITIONAL_M_EXCLUDE)
          return
-      endif
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine check_m_exclude_consistency
+   end subroutine check_m_exclude_consistency
 
    subroutine check_named_consistency(self, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -673,7 +673,7 @@ contains
       if ((.not. self%is_positional) .and. (.not. allocated(self%switch))) call self%errored(pref=pref, error=ERROR_NAMED_NO_NAME)
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine check_named_consistency
+   end subroutine check_named_consistency
 
    subroutine check_positional_consistency(self, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -690,10 +690,10 @@ contains
       elseif ((self%is_positional) .and. (self%act /= action_store)) then
          call self%errored(pref=pref, error=ERROR_POSITIONAL_NO_STORE)
          return
-      endif
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine check_positional_consistency
+   end subroutine check_positional_consistency
 
    subroutine check_choices(self, val, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -723,52 +723,52 @@ contains
          val_str = str(n=val)
          do c = 1, Nc
             if (val == cton(str=trim(adjustl(toks(c))), knd=1._R16P)) val_in = .true.
-         enddo
+         end do
 #endif
       type is (real(R8P))
          val_str = str(n=val)
          do c = 1, Nc
             if (val == cton(str=trim(adjustl(toks(c))), knd=1._R8P)) val_in = .true.
-         enddo
+         end do
       type is (real(R4P))
          val_str = str(n=val)
          do c = 1, Nc
             if (val == cton(str=trim(adjustl(toks(c))), knd=1._R4P)) val_in = .true.
-         enddo
+         end do
       type is (integer(I8P))
          val_str = str(n=val)
          do c = 1, Nc
             if (val == cton(str=trim(adjustl(toks(c))), knd=1_I8P)) val_in = .true.
-         enddo
+         end do
       type is (integer(I4P))
          val_str = str(n=val)
          do c = 1, Nc
             if (val == cton(str=trim(adjustl(toks(c))), knd=1_I4P)) val_in = .true.
-         enddo
+         end do
       type is (integer(I2P))
          val_str = str(n=val)
          do c = 1, Nc
             if (val == cton(str=trim(adjustl(toks(c))), knd=1_I2P)) val_in = .true.
-         enddo
+         end do
       type is (integer(I1P))
          val_str = str(n=val)
          do c = 1, Nc
             if (val == cton(str=trim(adjustl(toks(c))), knd=1_I1P)) val_in = .true.
-         enddo
+         end do
       type is (character(*))
          val_str = val
          do c = 1, Nc
             if (val == toks(c)) val_in = .true.
-         enddo
+         end do
       type is (logical)
          call self%errored(pref=pref, error=ERROR_CHOICES_LOGICAL)
-      endselect
+      end select
       if (.not. val_in .and. (self%error == 0)) then
          call self%errored(pref=pref, error=ERROR_NOT_IN_CHOICES, val_str=val_str)
-      endif
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine check_choices
+   end subroutine check_choices
 
    function check_list_size(self, Nv, val, pref) result(is_ok)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -789,12 +789,12 @@ contains
             is_ok = .false.
             if (self%nargs == '+') then
                call self%errored(pref=pref, error=ERROR_NARGS_INSUFFICIENT)
-            endif
-         endif
-      endif
+            end if
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endfunction check_list_size
+   end function check_list_size
 
    subroutine get_cla(self, val, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -813,38 +813,38 @@ contains
             call self%get_cla_from_buffer(buffer=self%val, val=val, pref=pref)
          elseif (allocated(self%def)) then ! using default value
             call self%get_cla_from_buffer(buffer=self%def, val=val, pref=pref)
-         endif
+         end if
          if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val, pref=pref)
       elseif (self%act == action_store_true) then
          if (self%is_passed) then
             select type (val)
             type is (logical)
                val = .true.
-            endselect
+            end select
          elseif (allocated(self%def)) then
             select type (val)
             type is (logical)
                read (self%def, *, iostat=self%error) val
                if (self%error /= 0) call self%errored(pref=pref, error=ERROR_CASTING_LOGICAL, log_value=self%def)
-            endselect
-         endif
+            end select
+         end if
       elseif (self%act == action_store_false) then
          if (self%is_passed) then
             select type (val)
             type is (logical)
                val = .false.
-            endselect
+            end select
          elseif (allocated(self%def)) then
             select type (val)
             type is (logical)
                read (self%def, *, iostat=self%error) val
                if (self%error /= 0) call self%errored(pref=pref, error=ERROR_CASTING_LOGICAL, log_value=self%def)
-            endselect
-         endif
-      endif
+            end select
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine get_cla
+   end subroutine get_cla
 
    subroutine get_cla_from_buffer(self, buffer, val, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -880,10 +880,10 @@ contains
          if (self%error /= 0) call self%errored(pref=pref, error=ERROR_CASTING_LOGICAL, log_value=buffer)
       type is (character(*))
          val = buffer
-      endselect
+      end select
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine get_cla_from_buffer
+   end subroutine get_cla_from_buffer
 
    subroutine get_cla_list(self, pref, val)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -902,47 +902,47 @@ contains
       if (.not. allocated(self%nargs)) then
          call self%errored(pref=pref, error=ERROR_NO_LIST)
          return
-      endif
+      end if
       if (self%act == action_store) then
          if (self%is_passed) then
             call self%get_cla_list_from_buffer(buffer=self%val, val=val, pref=pref)
          else ! using default value
             call self%get_cla_list_from_buffer(buffer=self%def, val=val, pref=pref)
-         endif
+         end if
       elseif (self%act == action_store_true) then
          if (self%is_passed) then
             select type (val)
             type is (logical)
                val = .true.
-            endselect
+            end select
          else
             call tokenize(strin=self%def, delimiter=' ', toks=valsD, Nt=Nv)
             select type (val)
             type is (logical)
                do v = 1, Nv
                   read (valsD(v), *) val(v)
-               enddo
-            endselect
-         endif
+               end do
+            end select
+         end if
       elseif (self%act == action_store_false) then
          if (self%is_passed) then
             select type (val)
             type is (logical)
                val = .false.
-            endselect
+            end select
          else
             call tokenize(strin=self%def, delimiter=' ', toks=valsD, Nt=Nv)
             select type (val)
             type is (logical)
                do v = 1, Nv
                   read (valsD(v), *) val(v)
-               enddo
-            endselect
-         endif
-      endif
+               end do
+            end select
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine get_cla_list
+   end subroutine get_cla_list
 
    subroutine get_cla_list_from_buffer(self, buffer, val, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -967,62 +967,62 @@ contains
             val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(vals(v))), knd=1._R16P)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)
             if (self%error /= 0) exit
-         enddo
+         end do
 #endif
       type is (real(R8P))
          do v = 1, Nv
             val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(vals(v))), knd=1._R8P)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)
             if (self%error /= 0) exit
-         enddo
+         end do
       type is (real(R4P))
          do v = 1, Nv
             val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(vals(v))), knd=1._R4P)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)
             if (self%error /= 0) exit
-         enddo
+         end do
       type is (integer(I8P))
          do v = 1, Nv
             val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(vals(v))), knd=1_I8P)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)
             if (self%error /= 0) exit
-         enddo
+         end do
       type is (integer(I4P))
          do v = 1, Nv
             val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(vals(v))), knd=1_I4P)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)
             if (self%error /= 0) exit
-         enddo
+         end do
       type is (integer(I2P))
          do v = 1, Nv
             val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(vals(v))), knd=1_I2P)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)
             if (self%error /= 0) exit
-         enddo
+         end do
       type is (integer(I1P))
          do v = 1, Nv
             val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(vals(v))), knd=1_I1P)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)
             if (self%error /= 0) exit
-         enddo
+         end do
       type is (logical)
          do v = 1, Nv
             read (vals(v), *, iostat=self%error) val(v)
             if (self%error /= 0) then
                call self%errored(pref=pref, error=ERROR_CASTING_LOGICAL, log_value=vals(v))
                exit
-            endif
-         enddo
+            end if
+         end do
       type is (character(*))
          do v = 1, Nv
             val(v) = vals(v)
             if (allocated(self%choices) .and. self%error == 0) call self%check_choices(val=val(v), pref=pref)
             if (self%error /= 0) exit
-         enddo
-      endselect
+         end do
+      end select
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine get_cla_list_from_buffer
+   end subroutine get_cla_list_from_buffer
 
    subroutine get_cla_list_varying_R16P(self, val, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -1042,7 +1042,7 @@ contains
       if (.not. allocated(self%nargs)) then
          call self%errored(pref=pref, error=ERROR_NO_LIST)
          return
-      endif
+      end if
       if (self%act == action_store) then
          if (self%is_passed) then
             call tokenize(strin=self%val, delimiter=ARGS_SEP, toks=valsV, Nt=Nv)
@@ -1051,7 +1051,7 @@ contains
             do v = 1, Nv
                val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(valsV(v))), knd=1._R16P)
                if (self%error /= 0) exit
-            enddo
+            end do
          else ! using default value
             call tokenize(strin=self%def, delimiter=ARGS_SEP, toks=valsD, Nt=Nv)
             if (.not. self%check_list_size(Nv=Nv, val=valsD(1), pref=pref)) return
@@ -1059,20 +1059,20 @@ contains
                if (trim(adjustl(valsD(1))) == '') then
                   if (self%nargs == '+') then
                      call self%errored(pref=pref, error=ERROR_NARGS_INSUFFICIENT)
-                  endif
+                  end if
                   return
-               endif
-            endif
+               end if
+            end if
             allocate (real(R16P):: val(1:Nv))
             do v = 1, Nv
                val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(valsD(v))), knd=1._R16P)
                if (self%error /= 0) exit
-            enddo
-         endif
-      endif
+            end do
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine get_cla_list_varying_R16P
+   end subroutine get_cla_list_varying_R16P
 
    subroutine get_cla_list_varying_R8P(self, val, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -1092,7 +1092,7 @@ contains
       if (.not. allocated(self%nargs)) then
          call self%errored(pref=pref, error=ERROR_NO_LIST)
          return
-      endif
+      end if
       if (self%act == action_store) then
          if (self%is_passed) then
             call tokenize(strin=self%val, delimiter=ARGS_SEP, toks=valsV, Nt=Nv)
@@ -1101,7 +1101,7 @@ contains
             do v = 1, Nv
                val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(valsV(v))), knd=1._R8P)
                if (self%error /= 0) exit
-            enddo
+            end do
          else ! using default value
             call tokenize(strin=self%def, delimiter=ARGS_SEP, toks=valsD, Nt=Nv)
             if (.not. self%check_list_size(Nv=Nv, val=valsD(1), pref=pref)) return
@@ -1109,12 +1109,12 @@ contains
             do v = 1, Nv
                val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(valsD(v))), knd=1._R8P)
                if (self%error /= 0) exit
-            enddo
-         endif
-      endif
+            end do
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine get_cla_list_varying_R8P
+   end subroutine get_cla_list_varying_R8P
 
    subroutine get_cla_list_varying_R4P(self, val, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -1134,7 +1134,7 @@ contains
       if (.not. allocated(self%nargs)) then
          call self%errored(pref=pref, error=ERROR_NO_LIST)
          return
-      endif
+      end if
       if (self%act == action_store) then
          if (self%is_passed) then
             call tokenize(strin=self%val, delimiter=ARGS_SEP, toks=valsV, Nt=Nv)
@@ -1143,7 +1143,7 @@ contains
             do v = 1, Nv
                val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(valsV(v))), knd=1._R4P)
                if (self%error /= 0) exit
-            enddo
+            end do
          else ! using default value
             call tokenize(strin=self%def, delimiter=ARGS_SEP, toks=valsD, Nt=Nv)
             if (.not. self%check_list_size(Nv=Nv, val=valsD(1), pref=pref)) return
@@ -1151,12 +1151,12 @@ contains
             do v = 1, Nv
                val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(valsD(v))), knd=1._R4P)
                if (self%error /= 0) exit
-            enddo
-         endif
-      endif
+            end do
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine get_cla_list_varying_R4P
+   end subroutine get_cla_list_varying_R4P
 
    subroutine get_cla_list_varying_I8P(self, val, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -1176,7 +1176,7 @@ contains
       if (.not. allocated(self%nargs)) then
          call self%errored(pref=pref, error=ERROR_NO_LIST)
          return
-      endif
+      end if
       if (self%act == action_store) then
          if (self%is_passed) then
             call tokenize(strin=self%val, delimiter=ARGS_SEP, toks=valsV, Nt=Nv)
@@ -1185,7 +1185,7 @@ contains
             do v = 1, Nv
                val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(valsV(v))), knd=1_I8P)
                if (self%error /= 0) exit
-            enddo
+            end do
          else ! using default value
             call tokenize(strin=self%def, delimiter=ARGS_SEP, toks=valsD, Nt=Nv)
             if (.not. self%check_list_size(Nv=Nv, val=valsD(1), pref=pref)) return
@@ -1193,12 +1193,12 @@ contains
             do v = 1, Nv
                val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(valsD(v))), knd=1_I8P)
                if (self%error /= 0) exit
-            enddo
-         endif
-      endif
+            end do
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine get_cla_list_varying_I8P
+   end subroutine get_cla_list_varying_I8P
 
    subroutine get_cla_list_varying_I4P(self, val, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -1218,7 +1218,7 @@ contains
       if (.not. allocated(self%nargs)) then
          call self%errored(pref=pref, error=ERROR_NO_LIST)
          return
-      endif
+      end if
       if (self%act == action_store) then
          if (self%is_passed) then
             call tokenize(strin=self%val, delimiter=ARGS_SEP, toks=valsV, Nt=Nv)
@@ -1227,7 +1227,7 @@ contains
             do v = 1, Nv
                val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(valsV(v))), knd=1_I4P)
                if (self%error /= 0) exit
-            enddo
+            end do
          else ! using default value
             call tokenize(strin=self%def, delimiter=ARGS_SEP, toks=valsD, Nt=Nv)
             if (.not. self%check_list_size(Nv=Nv, val=valsD(1), pref=pref)) return
@@ -1235,12 +1235,12 @@ contains
             do v = 1, Nv
                val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(valsD(v))), knd=1_I4P)
                if (self%error /= 0) exit
-            enddo
-         endif
-      endif
+            end do
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine get_cla_list_varying_I4P
+   end subroutine get_cla_list_varying_I4P
 
    subroutine get_cla_list_varying_I2P(self, val, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -1260,7 +1260,7 @@ contains
       if (.not. allocated(self%nargs)) then
          call self%errored(pref=pref, error=ERROR_NO_LIST)
          return
-      endif
+      end if
       if (self%act == action_store) then
          if (self%is_passed) then
             call tokenize(strin=self%val, delimiter=ARGS_SEP, toks=valsV, Nt=Nv)
@@ -1269,7 +1269,7 @@ contains
             do v = 1, Nv
                val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(valsV(v))), knd=1_I2P)
                if (self%error /= 0) exit
-            enddo
+            end do
          else ! using default value
             call tokenize(strin=self%def, delimiter=ARGS_SEP, toks=valsD, Nt=Nv)
             if (.not. self%check_list_size(Nv=Nv, val=valsD(1), pref=pref)) return
@@ -1277,12 +1277,12 @@ contains
             do v = 1, Nv
                val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(valsD(v))), knd=1_I2P)
                if (self%error /= 0) exit
-            enddo
-         endif
-      endif
+            end do
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine get_cla_list_varying_I2P
+   end subroutine get_cla_list_varying_I2P
 
    subroutine get_cla_list_varying_I1P(self, val, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -1302,7 +1302,7 @@ contains
       if (.not. allocated(self%nargs)) then
          call self%errored(pref=pref, error=ERROR_NO_LIST)
          return
-      endif
+      end if
       if (self%act == action_store) then
          if (self%is_passed) then
             call tokenize(strin=self%val, delimiter=ARGS_SEP, toks=valsV, Nt=Nv)
@@ -1311,7 +1311,7 @@ contains
             do v = 1, Nv
                val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(valsV(v))), knd=1_I1P)
                if (self%error /= 0) exit
-            enddo
+            end do
          else ! using default value
             call tokenize(strin=self%def, delimiter=ARGS_SEP, toks=valsD, Nt=Nv)
             if (.not. self%check_list_size(Nv=Nv, val=valsD(1), pref=pref)) return
@@ -1319,12 +1319,12 @@ contains
             do v = 1, Nv
                val(v) = cton(pref=pref, error=self%error, str=trim(adjustl(valsD(v))), knd=1_I1P)
                if (self%error /= 0) exit
-            enddo
-         endif
-      endif
+            end do
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine get_cla_list_varying_I1P
+   end subroutine get_cla_list_varying_I1P
 
    subroutine get_cla_list_varying_logical(self, val, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -1344,7 +1344,7 @@ contains
       if (.not. allocated(self%nargs)) then
          call self%errored(pref=pref, error=ERROR_NO_LIST)
          return
-      endif
+      end if
       if (self%act == action_store) then
          if (self%is_passed) then
             call tokenize(strin=self%val, delimiter=ARGS_SEP, toks=valsV, Nt=Nv)
@@ -1355,8 +1355,8 @@ contains
                if (self%error /= 0) then
                   call self%errored(pref=pref, error=ERROR_CASTING_LOGICAL, log_value=valsD(v))
                   exit
-               endif
-            enddo
+               end if
+            end do
          else ! using default value
             call tokenize(strin=self%def, delimiter=ARGS_SEP, toks=valsD, Nt=Nv)
             if (.not. self%check_list_size(Nv=Nv, val=valsD(1), pref=pref)) return
@@ -1366,13 +1366,13 @@ contains
                if (self%error /= 0) then
                   call self%errored(pref=pref, error=ERROR_CASTING_LOGICAL, log_value=valsD(v))
                   exit
-               endif
-            enddo
-         endif
-      endif
+               end if
+            end do
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine get_cla_list_varying_logical
+   end subroutine get_cla_list_varying_logical
 
    subroutine get_cla_list_varying_char(self, val, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -1392,7 +1392,7 @@ contains
       if (.not. allocated(self%nargs)) then
          call self%errored(pref=pref, error=ERROR_NO_LIST)
          return
-      endif
+      end if
       if (self%act == action_store) then
          if (self%is_passed) then
             call tokenize(strin=self%val, delimiter=ARGS_SEP, toks=valsV, Nt=Nv)
@@ -1400,19 +1400,19 @@ contains
             allocate (val(1:Nv))
             do v = 1, Nv
                val(v) = trim(adjustl(valsV(v)))
-            enddo
+            end do
          else ! using default value
             call tokenize(strin=self%def, delimiter=ARGS_SEP, toks=valsD, Nt=Nv)
             if (.not. self%check_list_size(Nv=Nv, val=valsD(1), pref=pref)) return
             allocate (val(1:Nv))
             do v = 1, Nv
                val(v) = trim(adjustl(valsD(v)))
-            enddo
-         endif
-      endif
+            end do
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine get_cla_list_varying_char
+   end subroutine get_cla_list_varying_char
 
    elemental subroutine cla_assign_cla(lhs, rhs)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -1441,7 +1441,7 @@ contains
       lhs%is_hidden = rhs%is_hidden
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine cla_assign_cla
+   end subroutine cla_assign_cla
 
    elemental subroutine finalize(self)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -1454,5 +1454,5 @@ contains
       call self%free
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine finalize
-endmodule flap_command_line_argument_t
+   end subroutine finalize
+end module flap_command_line_argument_t

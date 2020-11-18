@@ -35,7 +35,7 @@ module flap_object_t
       procedure, pass(self) :: print_version       !< Print version.
       procedure, pass(self) :: print_error_message !< Print meaningful error message.
       procedure, pass(lhs) :: assign_object       !< Assignment overloading.
-   endtype object
+   end type object
 
 contains
    ! public methods
@@ -61,7 +61,7 @@ contains
       self%usage_lun = stderr
       self%version_lun = stdout
       self%error_lun = stderr
-   endsubroutine free_object
+   end subroutine free_object
 
    subroutine print_version(self, pref)
       !< Print version.
@@ -73,11 +73,11 @@ contains
       write (self%version_lun, '(A)') prefd//self%progname//' version '//self%version
       if (self%license /= '') then
          write (self%version_lun, '(A)') prefd//self%license
-      endif
+      end if
       if (self%authors /= '') then
          write (self%version_lun, '(A)') prefd//self%authors
-      endif
-   endsubroutine print_version
+      end if
+   end subroutine print_version
 
    subroutine print_error_message(self)
       !< Print meaningful error message to standard-error.
@@ -85,7 +85,7 @@ contains
 
       write (self%error_lun, '(A)') self%error_message
       write (self%error_lun, '(A)')
-   endsubroutine print_error_message
+   end subroutine print_error_message
 
    elemental subroutine assign_object(lhs, rhs)
       !< Assign two abstract objects.
@@ -110,5 +110,5 @@ contains
       lhs%usage_lun = rhs%usage_lun
       lhs%version_lun = rhs%version_lun
       lhs%error_lun = rhs%error_lun
-   endsubroutine assign_object
-endmodule flap_object_t
+   end subroutine assign_object
+end module flap_object_t

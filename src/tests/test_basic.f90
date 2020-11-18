@@ -76,15 +76,15 @@ call cli%add(switch='--integer_ex',switch_ab='-ie',help='Exclusive integer input
    if (error /= 0) stop
    call cli%add(positional=.true., position=1, help='Positional real input', required=.false., def='1.0', error=error)
    if (error /= 0) stop
-call cli%add(switch='--env',switch_ab='-e',help='Environment input',required=.false.,act='store',def='-1',envvar='FLAP_NUM_INT',&
+   call cli%add(switch='--env',switch_ab='-e',help='Environment input',required=.false.,act='store',def='-1',envvar='FLAP_NUM_INT',&
                 error=error)
    if (error /= 0) stop
  call cli%add(switch='--man_file', help='Save manual into man_file', required=.false., act='store', def='test_basic.1', error=error)
    if (error /= 0) stop
-call cli%add(switch='--varying_listR8P',switch_ab='-vlR8P',help='Varying size real R8P list input',required=.false.,act='store',&
+   call cli%add(switch='--varying_listR8P',switch_ab='-vlR8P',help='Varying size real R8P list input',required=.false.,act='store',&
                 nargs='*', def='1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0', error=error)
    if (error /= 0) stop
-call cli%add(switch='--varying_listR4P',switch_ab='-vlR4P',help='Varying size real R4P list input',required=.false.,act='store',&
+   call cli%add(switch='--varying_listR4P',switch_ab='-vlR4P',help='Varying size real R4P list input',required=.false.,act='store',&
                 nargs='*', def='1.0 2.0 3.0 4.0', error=error)
    if (error /= 0) stop
 call cli%add(switch='--varying_listI8P',switch_ab='-vlI8P',help='Varying size integer I8P list input',required=.false.,act='store',&
@@ -99,7 +99,7 @@ call cli%add(switch='--varying_listI2P',switch_ab='-vlI2P',help='Varying size in
 call cli%add(switch='--varying_listI1P',switch_ab='-vlI1P',help='Varying size integer I1P list input',required=.false.,act='store',&
                 nargs='+', def='1', error=error)
    if (error /= 0) stop
-call cli%add(switch='--varying_listBool',switch_ab='-vlBool',help='Varying size boolean list input',required=.false.,act='store',&
+  call cli%add(switch='--varying_listBool',switch_ab='-vlBool',help='Varying size boolean list input',required=.false.,act='store',&
                 nargs='*', def='T F T T F', error=error)
    if (error /= 0) stop
 call cli%add(switch='--varying_listChar',switch_ab='-vlChar',help='Varying size character list input',required=.false.,act='store',&
@@ -142,82 +142,82 @@ call cli%add(switch='--varying_listChar',switch_ab='-vlChar',help='Varying size 
    print '(A)', 'Integer list inputs:'
    do l = 1, 3
       print '(A)', '  Input('//trim(str(l, .true.))//') = '//trim(str(n=ilist(l)))
-   enddo
+   end do
    if (allocated(vlistR8P)) then
       print '(A)', 'Varying size real R8P list inputs:'
       do l = 1, size(vlistR8P)
          print '(A)', '  Input('//trim(str(l, .true.))//') = '//trim(str(n=vlistR8P(l)))
-      enddo
+      end do
    else
       print '(A)', 'Problems occuour with varying size real R8P list!'
-   endif
+   end if
    if (allocated(vlistR4P)) then
       print '(A)', 'Varying size real R4P list inputs:'
       do l = 1, size(vlistR4P)
          print '(A)', '  Input('//trim(str(l, .true.))//') = '//trim(str(n=vlistR4P(l)))
-      enddo
+      end do
    else
       print '(A)', 'Problems occuour with varying size real R4P list!'
-   endif
+   end if
    if (allocated(vlistI8P)) then
       print '(A)', 'Varying size integer I8P list inputs:'
       do l = 1, size(vlistI8P)
          print '(A)', '  Input('//trim(str(l, .true.))//') = '//trim(str(n=vlistI8P(l)))
-      enddo
+      end do
    else
       print '(A)', 'Problems occuour with varying size integer I8P list!'
-   endif
+   end if
    if (allocated(vlistI4P)) then
       print '(A)', 'Varying size integer I4P list inputs:'
       do l = 1, size(vlistI4P)
          print '(A)', '  Input('//trim(str(l, .true.))//') = '//trim(str(n=vlistI4P(l)))
-      enddo
+      end do
    else
       print '(A)', 'Problems occuour with varying size integer I4P list!'
-   endif
+   end if
    if (allocated(vlistI2P)) then
       print '(A)', 'Varying size integer I2P list inputs:'
       do l = 1, size(vlistI2P)
          print '(A)', '  Input('//trim(str(l, .true.))//') = '//trim(str(n=vlistI2P(l)))
-      enddo
+      end do
    else
       print '(A)', 'Problems occuour with varying size integer I2P list!'
-   endif
+   end if
    if (allocated(vlistI1P)) then
       print '(A)', 'Varying size integer I1P list inputs:'
       do l = 1, size(vlistI1P)
          print '(A)', '  Input('//trim(str(l, .true.))//') = '//trim(str(n=vlistI1P(l)))
-      enddo
+      end do
    else
       print '(A)', 'Problems occuour with varying size integer I1P list!'
-   endif
+   end if
    if (allocated(vlistBool)) then
       print '(A)', 'Varying size boolean list inputs:'
       do l = 1, size(vlistBool)
          print '(A,L1)', '  Input('//trim(str(l, .true.))//') = ', vlistBool(l)
-      enddo
+      end do
    else
       print '(A)', 'Problems occuour with varying size boolean list!'
-   endif
+   end if
    if (allocated(vlistChar)) then
       print '(A)', 'Varying size character list inputs:'
       do l = 1, size(vlistChar)
          print '(A)', '  Input('//trim(str(l, .true.))//') = '//vlistChar(l)
-      enddo
+      end do
    else
       print '(A)', 'Problems occuour with varying size character list!'
-   endif
+   end if
    if (allocated(garbage)) then
       print '(A)', 'You have used implicit "--" option for collecting list of "trailing garbage" values that are:'
       do l = 1, size(garbage)
          print '(A)', '  Garbage('//trim(str(l, .true.))//') = '//garbage(l)
-      enddo
-   endif
+      end do
+   end if
    if (cli%is_passed(switch='--man_file')) then
       call cli%get(switch='--man_file', val=sval, error=error); if (error /= 0) stop
       print '(A)', 'Saving man page'
       call cli%save_man_page(error=error, man_file=trim(adjustl(sval)))
-   endif
+   end if
    stop
 !-----------------------------------------------------------------------------------------------------------------------------------
-endprogram test_basic
+end program test_basic

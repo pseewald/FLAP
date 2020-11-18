@@ -22,7 +22,7 @@ module flap_utils_m
    interface count
       !< Overload intrinsic function count for counting substring occurences into strings.
       module procedure count_substring
-   endinterface
+   end interface
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
    elemental function count_substring(string, substring) result(No)
@@ -45,9 +45,9 @@ contains
          if (c2 == 0) return
          No = No + 1
          c1 = c1 + c2 + len(substring)
-      enddo
+      end do
       !---------------------------------------------------------------------------------------------------------------------------------
-   endfunction count_substring
+   end function count_substring
 
    pure function replace(string, substring, restring) result(newstring)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -68,11 +68,11 @@ contains
             newstring = restring//string(len(substring) + 1:)
          else
             newstring = string(1:pos - 1)//restring//string(pos + len(substring):)
-         endif
-      endif
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endfunction replace
+   end function replace
 
    pure function replace_all(string, substring, restring) result(newstring)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -93,11 +93,11 @@ contains
             newstring = replace(string=newstring, substring=substring, restring=restring)
          else
             exit
-         endif
-      enddo
+         end if
+      end do
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endfunction replace_all
+   end function replace_all
 
    pure subroutine tokenize(strin, delimiter, toks, Nt)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -125,12 +125,12 @@ contains
       dlen = len(delimiter)
       if (dlen > len(strin)) then
          allocate (toks(1:1)); toks(1) = strin; if (present(Nt)) Nt = 1; return
-      endif
+      end if
       ! compute the number of tokens
       n = 1
       do c = 1, len(strsub) - dlen ! loop over string characters
          if (strsub(c:c + dlen - 1) == delimiter) n = n + 1
-      enddo
+      end do
       allocate (toks(1:n))
       ! tokenization
       do t = 1, n ! loop over tokens
@@ -140,12 +140,12 @@ contains
             strsub = strsub(c + dlen:)
          else
             toks(t) = strsub
-         endif
-      enddo
+         end if
+      end do
       if (present(Nt)) Nt = n
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine tokenize
+   end subroutine tokenize
 
    elemental function unique(string, substring) result(uniq)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -177,16 +177,16 @@ contains
                   c2 = c2 + Lsub
                else
                   exit Loop2
-               endif
-            enddo Loop2
+               end if
+            end do Loop2
             uniq = uniq(1:c1)//uniq(c2:)
          else
             c1 = c1 + Lsub
-         endif
-      enddo Loop1
+         end if
+      end do Loop1
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endfunction unique
+   end function unique
 
    elemental function upper_case(string)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -205,10 +205,10 @@ contains
       do n1 = 1, len(string)
          n2 = index(lower_alphabet, string(n1:n1))
          if (n2 > 0) upper_case(n1:n1) = upper_alphabet(n2:n2)
-      enddo
+      end do
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endfunction upper_case
+   end function upper_case
 
    pure function wstrip(string) result(newstring)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -222,5 +222,5 @@ contains
       allocate (newstring, source=trim(adjustl(string)))
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endfunction wstrip
-endmodule flap_utils_m
+   end function wstrip
+end module flap_utils_m

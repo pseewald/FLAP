@@ -49,7 +49,7 @@ module flap_command_line_arguments_group_t
       procedure, private :: clasg_assign_clasg                  !< Assignment operator.
       generic, private :: assignment(=) => clasg_assign_clasg !< Assignment operator overloading.
       final              :: finalize                            !< Free dynamic memory when finalizing.
-   endtype command_line_arguments_group
+   end type command_line_arguments_group
 
 ! status codes
    integer(I4P), parameter :: STATUS_PRINT_V = -1 !< Print version status.
@@ -76,14 +76,14 @@ contains
       if (allocated(self%cla)) then
          call self%cla%free
          deallocate (self%cla)
-      endif
+      end if
       self%Na = 0_I4P
       self%Na_required = 0_I4P
       self%Na_optional = 0_I4P
       self%is_called = .false.
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine free
+   end subroutine free
 
    subroutine check(self, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -105,24 +105,24 @@ contains
                       (self%cla(a)%switch == self%cla(aa)%switch_ab) .or. (self%cla(a)%switch_ab == self%cla(aa)%switch_ab)) then
                      call self%errored(pref=pref, error=ERROR_CONSISTENCY, a1=a, a2=aa)
                      exit CLA_unique
-                  endif
-               endif
-            enddo
-         endif
-      enddo CLA_unique
+                  end if
+               end if
+            end do
+         end if
+      end do CLA_unique
       ! update mutually exclusive relations
       CLA_exclude: do a = 1, self%Na
          if (.not. self%cla(a)%is_positional) then
             if (self%cla(a)%m_exclude /= '') then
                if (self%is_defined(switch=self%cla(a)%m_exclude, pos=aa)) then
                   self%cla(aa)%m_exclude = self%cla(a)%switch
-               endif
-            endif
-         endif
-      enddo CLA_exclude
+               end if
+            end if
+         end if
+      end do CLA_exclude
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine check
+   end subroutine check
 
    subroutine is_required_passed(self, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -140,12 +140,12 @@ contains
                self%error = self%cla(a)%error
                write (self%usage_lun, '(A)') self%usage(pref=pref)
                return
-            endif
-         enddo
-      endif
+            end if
+         end do
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine is_required_passed
+   end subroutine is_required_passed
 
    pure function is_passed(self, switch, position)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -167,16 +167,16 @@ contains
                   if ((self%cla(a)%switch == switch) .or. (self%cla(a)%switch_ab == switch)) then
                      is_passed = self%cla(a)%is_passed
                      exit
-                  endif
-               endif
-            enddo
+                  end if
+               end if
+            end do
          elseif (present(position)) then
             is_passed = self%cla(position)%is_passed
-         endif
-      endif
+         end if
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endfunction is_passed
+   end function is_passed
 
    function is_defined(self, switch, pos)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -199,13 +199,13 @@ contains
                   is_defined = .true.
                   if (present(pos)) pos = a
                   exit
-               endif
-            endif
-         enddo
-      endif
+               end if
+            end if
+         end do
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endfunction is_defined
+   end function is_defined
 
    subroutine raise_error_m_exclude(self, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -219,7 +219,7 @@ contains
       call self%errored(pref=pref, error=ERROR_M_EXCLUDE)
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine raise_error_m_exclude
+   end subroutine raise_error_m_exclude
 
    subroutine add(self, pref, cla)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -241,34 +241,34 @@ contains
             allocate (cla_list_new(1:self%Na + 1))
             do c = 1, self%Na
                cla_list_new(c) = self%cla(c)
-            enddo
+            end do
             cla_list_new(self%Na + 1) = cla
          else
             allocate (cla_list_new(1:self%Na + 1))
             do c = 1, cla%position - 1
                cla_list_new(c) = self%cla(c)
-            enddo
+            end do
             cla_list_new(cla%position) = cla
             do c = cla%position + 1, self%Na + 1
                cla_list_new(c) = self%cla(c - 1)
-            enddo
-         endif
+            end do
+         end if
       else
          allocate (cla_list_new(1:1))
          cla_list_new(1) = cla
-      endif
+      end if
       call move_alloc(from=cla_list_new, to=self%cla)
       self%Na = self%Na + 1
       if (cla%is_required) then
          self%Na_required = self%Na_required + 1
       else
          self%Na_optional = self%Na_optional + 1
-      endif
+      end if
       if (allocated(cla_list_new)) deallocate (cla_list_new)
       call self%check(pref=pref)
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine add
+   end subroutine add
 
    subroutine parse(self, args, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -308,8 +308,8 @@ contains
                                  self%cla(a)%val = trim(adjustl(args(arg)))
                                  found = .true.
                                  found_val = .true.
-                              endif
-                           endif
+                              end if
+                           end if
                            if (.not. found) then
                               ! not found, try to take val from environment
                               call get_environment_variable(name=self%cla(a)%envvar, value=envvar, status=aa)
@@ -321,9 +321,9 @@ contains
                                  if (allocated(self%cla(a)%def)) then
                                     self%cla(a)%val = self%cla(a)%def
                                     found_val = .true.
-                                 endif
-                              endif
-                           endif
+                                 end if
+                              end if
+                           end if
                         elseif (allocated(self%cla(a)%nargs)) then
                            self%cla(a)%val = ''
                            select case (self%cla(a)%nargs)
@@ -334,19 +334,19 @@ contains
                                     aaa = aa
                                  else
                                     exit
-                                 endif
-                              enddo
+                                 end if
+                              end do
                               if (aaa >= arg + 1) then
                                  do aa = aaa, arg + 1, -1 ! decreasing loop due to gfortran bug
                                     self%cla(a)%val = trim(adjustl(args(aa)))//args_sep//trim(self%cla(a)%val)
                                     found_val = .true.
-                                 enddo
+                                 end do
                                  arg = aaa
                               elseif (aaa == 0) then
                                  call self%cla(a)%raise_error_nargs_insufficient(pref=pref)
                                  self%error = self%cla(a)%error
                                  return
-                              endif
+                              end if
                            case ('*')
                               aaa = 0
                               do aa = arg + 1, size(args, dim=1)
@@ -354,38 +354,38 @@ contains
                                     aaa = aa
                                  else
                                     exit
-                                 endif
-                              enddo
+                                 end if
+                              end do
                               if (aaa >= arg + 1) then
                                  do aa = aaa, arg + 1, -1 ! decreasing loop due to gfortran bug
                                     self%cla(a)%val = trim(adjustl(args(aa)))//args_sep//trim(self%cla(a)%val)
                                     found_val = .true.
-                                 enddo
+                                 end do
                                  arg = aaa
-                              endif
+                              end if
                            case default
                               nargs = cton(str=trim(adjustl(self%cla(a)%nargs)), knd=1_I4P)
                               if (arg + nargs > size(args, dim=1)) then
                                  call self%cla(a)%raise_error_nargs_insufficient(pref=pref)
                                  self%error = self%cla(a)%error
                                  return
-                              endif
+                              end if
                               do aa = arg + nargs, arg + 1, -1 ! decreasing loop due to gfortran bug
                                  self%cla(a)%val = trim(adjustl(args(aa)))//args_sep//trim(self%cla(a)%val)
-                              enddo
+                              end do
                               found_val = .true.
                               arg = arg + nargs
-                           endselect
+                           end select
                         else
                            if (arg + 1 > size(args)) then
                               call self%cla(a)%raise_error_value_missing(pref=pref)
                               self%error = self%cla(a)%error
                               return
-                           endif
+                           end if
                            arg = arg + 1
                            self%cla(a)%val = trim(adjustl(args(arg)))
                            found_val = .true.
-                        endif
+                        end if
                      elseif (self%cla(a)%act == action_store_star) then
                         if (arg + 1 <= size(args, dim=1)) then ! verify if the value has been passed directly to cli
                            ! there are still other arguments to check
@@ -395,23 +395,23 @@ contains
                               self%cla(a)%val = trim(adjustl(args(arg)))
                               found = .true.
                               found_val = .true.
-                           endif
-                        endif
+                           end if
+                        end if
                         if (.not. found) then
                            ! flush default to val if default is set
                            if (allocated(self%cla(a)%def)) self%cla(a)%val = self%cla(a)%def
-                        endif
+                        end if
                      elseif (self%cla(a)%act == action_print_help) then
                         self%error = STATUS_PRINT_H
                      elseif (self%cla(a)%act == action_print_vers) then
                         self%error = STATUS_PRINT_V
-                     endif
+                     end if
                      self%cla(a)%is_passed = .true.
                      found = .true.
                      exit
-                  endif
-               endif
-            enddo
+                  end if
+               end if
+            end do
             if (.not. found) then ! current argument (arg-th) does not correspond to a named option
                if (.not. self%cla(arg)%is_positional) then ! current argument (arg-th) is not positional... there is a problem!
                   call self%cla(arg)%raise_error_switch_unknown(pref=pref, switch=trim(adjustl(args(arg))))
@@ -421,15 +421,15 @@ contains
                   ! positional CLA always stores a value
                   self%cla(arg)%val = trim(adjustl(args(arg)))
                   self%cla(arg)%is_passed = .true.
-               endif
-            endif
-         enddo
+               end if
+            end if
+         end do
          call self%check_m_exclusive(pref=pref)
          call self%sanitize_defaults
-      endif
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine parse
+   end subroutine parse
 
    function usage(self, pref, no_header, markdown)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -453,24 +453,24 @@ contains
       if (self%description /= '') usage = usage//new_line('a')//new_line('a')//prefd//self%description
       if (present(no_header)) then
          if (no_header) usage = ''
-      endif
+      end if
       if (self%Na_required > 0) then
          usage = usage//new_line('a')//new_line('a')//prefd//'Required switches:'
          do a = 1, self%Na
             if (self%cla(a)%is_required .and. (.not. self%cla(a)%is_hidden)) usage = usage//new_line('a')// &
                                                                                    self%cla(a)%usage(pref=prefd, markdown=markdownd)
-         enddo
-      endif
+         end do
+      end if
       if (self%Na_optional > 0) then
          usage = usage//new_line('a')//new_line('a')//prefd//'Optional switches:'
          do a = 1, self%Na
             if (.not. self%cla(a)%is_required .and. (.not. self%cla(a)%is_hidden)) usage = usage//new_line('a')// &
                                                                                    self%cla(a)%usage(pref=prefd, markdown=markdownd)
-         enddo
-      endif
+         end do
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endfunction usage
+   end function usage
 
    function signature(self)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -485,10 +485,10 @@ contains
       signature = ''
       do a = 1, self%Na
          signature = signature//self%cla(a)%signature()
-      enddo
+      end do
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endfunction signature
+   end function signature
 
    ! private methods
    subroutine errored(self, error, pref, a1, a2)
@@ -510,7 +510,7 @@ contains
                self%error_message = prefd//': group (command) name: "'//self%group//'" consistency error:'
             else
                self%error_message = prefd//': consistency error:'
-            endif
+            end if
             self%error_message = self%error_message//' "'//trim(str(a1, .true.))// &
                                  '-th" option has the same switch or abbreviated switch of "'// &
                                  trim(str(a2, .true.))//'-th" option:'//new_line('a')
@@ -521,10 +521,10 @@ contains
          case (ERROR_M_EXCLUDE)
             self%error_message = prefd//': the group "'//self%group//'" and "'//self%m_exclude//'" are mutually'// &
                                  ' exclusive, but both have been called!'
-         endselect
+         end select
          call self%print_error_message
-      endif
-   endsubroutine errored
+      end if
+   end subroutine errored
 
    subroutine check_m_exclusive(self, pref)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -544,14 +544,14 @@ contains
                      call self%cla(a)%raise_error_m_exclude(pref=pref)
                      self%error = self%cla(a)%error
                      return
-                  endif
-               endif
-            endif
-         enddo
-      endif
+                  end if
+               end if
+            end if
+         end do
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine check_m_exclusive
+   end subroutine check_m_exclusive
 
    subroutine sanitize_defaults(self)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -567,11 +567,11 @@ contains
       if (self%is_called) then
          do a = 1, self%Na
             call self%cla(a)%sanitize_defaults
-         enddo
-      endif
+         end do
+      end if
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine sanitize_defaults
+   end subroutine sanitize_defaults
 
    elemental subroutine clasg_assign_clasg(lhs, rhs)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -588,14 +588,14 @@ contains
       if (allocated(rhs%group)) lhs%group = rhs%group
       if (allocated(rhs%cla)) then
          if (allocated(lhs%cla)) deallocate (lhs%cla); allocate (lhs%cla(1:size(rhs%cla, dim=1)), source=rhs%cla)
-      endif
+      end if
       lhs%Na = rhs%Na
       lhs%Na_required = rhs%Na_required
       lhs%Na_optional = rhs%Na_optional
       lhs%is_called = rhs%is_called
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine clasg_assign_clasg
+   end subroutine clasg_assign_clasg
 
    elemental subroutine finalize(self)
       !---------------------------------------------------------------------------------------------------------------------------------
@@ -608,5 +608,5 @@ contains
       call self%free
       return
       !---------------------------------------------------------------------------------------------------------------------------------
-   endsubroutine finalize
-endmodule flap_command_line_arguments_group_t
+   end subroutine finalize
+end module flap_command_line_arguments_group_t

@@ -15,4 +15,4 @@ program flap_test_choices_logical
    call cli%parse(error=error)
    call cli%get(switch='-bv', val=vbval, error=error)
    print "(A)", "Error code: "//trim(str(error, .true.))
-endprogram flap_test_choices_logical
+end program flap_test_choices_logical

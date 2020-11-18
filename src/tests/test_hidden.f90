@@ -36,4 +36,4 @@ program test_hidden
    print '(A)', 'Integer      = '//trim(adjustl(str(a_integer, .true.)))
    stop
 !-----------------------------------------------------------------------------------------------------------------------------------
-endprogram test_hidden
+end program test_hidden

@@ -83,7 +83,7 @@ module flap_command_line_interface_t
       procedure, private :: cli_assign_cli                  !< CLI assignment overloading.
       generic, private :: assignment(=) => cli_assign_cli !< CLI assignment overloading.
       final              :: finalize                        !< Free dynamic memory when finalizing.
-   endtype command_line_interface
+   end type command_line_interface
 
    integer(I4P), parameter, public :: MAX_VAL_LEN = 1000 !< Maximum number of characters of CLA value.
 ! errors codes
@@ -105,14 +105,14 @@ contains
       if (allocated(self%clasg)) then
          do g = 0, size(self%clasg, dim=1) - 1
             call self%clasg(g)%free
-         enddo
+         end do
          deallocate (self%clasg)
-      endif
+      end if
       if (allocated(self%args)) deallocate (self%args)
       if (allocated(self%examples)) deallocate (self%examples)
       self%disable_hv = .false.
       self%is_parsed_ = .false.
-   endsubroutine free
+   end subroutine free
 
    subroutine init(self, progname, version, help, description, license, authors, examples, epilog, disable_hv, &
                    usage_lun, error_lun, version_lun, error_color, error_style)
@@ -148,8 +148,8 @@ contains
             self%progname = prog_invocation
          else
             self%progname = 'program'
-         endif
-      endif
+         end if
+      end if
       self%version = 'unknown'; if (present(version)) self%version = version
       self%help = 'usage: '; if (present(help)) self%help = help
       self%description = ''; if (present(description)) self%description = description
@@ -162,7 +162,7 @@ contains
          allocate (character(len=len(examples(1))):: self%examples(1:size(examples))) ! does not work with gfortran 4.9.2
 #endif
          self%examples = examples
-      endif
+      end if
       self%epilog = ''; if (present(epilog)) self%epilog = epilog
       if (present(disable_hv)) self%disable_hv = disable_hv  ! default set by self%free
       if (present(usage_lun)) self%usage_lun = usage_lun   ! default set by self%free
@@ -174,7 +174,7 @@ contains
       allocate (self%clasg(0:0))
       call self%clasg(0)%assign_object(self)
       self%clasg(0)%group = ''
-   endsubroutine init
+   end subroutine init
 
    subroutine add_group(self, help, description, exclude, group)
       !< Add CLAs group to CLI.
@@ -199,7 +199,7 @@ contains
 !    clasg_list_new(0:Ng-1) = self%clasg(0:Ng-1) ! Not working on Intel Fortran 15.0.2
          do gi = 0, Ng - 1
             clasg_list_new(gi) = self%clasg(gi)
-         enddo
+         end do
          call clasg_list_new(Ng)%assign_object(self)
          clasg_list_new(Ng)%help = helpd
          clasg_list_new(Ng)%description = descriptiond
@@ -209,8 +209,8 @@ contains
          allocate (self%clasg(0:Ng))
          self%clasg = clasg_list_new
          deallocate (clasg_list_new)
-      endif
-   endsubroutine add_group
+      end if
+   end subroutine add_group
 
    subroutine set_mutually_exclusive_groups(self, group1, group2)
       !< Set two CLAs group ad mutually exclusive.
@@ -223,8 +223,8 @@ contains
       if (self%is_defined_group(group=group1, g=g1) .and. self%is_defined_group(group=group2, g=g2)) then
          self%clasg(g1)%m_exclude = group2
          self%clasg(g2)%m_exclude = group1
-      endif
-   endsubroutine set_mutually_exclusive_groups
+      end if
+   end subroutine set_mutually_exclusive_groups
 
    subroutine add(self, pref, group, group_index, switch, switch_ab, help, help_markdown, help_color, help_style, &
                   required, positional, position, hidden, act, def, nargs, choices, exclude, envvar, error)
@@ -269,8 +269,8 @@ contains
          if (present(switch_ab)) then
             cla%switch = switch_ab
             cla%switch_ab = switch_ab
-         endif
-      endif
+         end if
+      end if
       if (present(switch_ab)) cla%switch_ab = switch_ab
       cla%help = 'Undocumented argument'; if (present(help)) cla%help = help
       cla%help_color = ''; if (present(help_color)) cla%help_color = help_color
@@ -291,7 +291,7 @@ contains
       if (self%error /= 0) then
          if (present(error)) error = self%error
          return
-      endif
+      end if
       ! add CLA to CLI
       if ((.not. present(group)) .and. (.not. present(group_index))) then
          call self%clasg(0)%add(pref=pref, cla=cla); self%error = self%clasg(0)%error
@@ -301,14 +301,14 @@ contains
          else
             call self%add_group(group=group)
             call self%clasg(size(self%clasg, dim=1) - 1)%add(pref=pref, cla=cla); self%error = self%clasg(size(self%clasg, dim=1) - 1)%error
-         endif
+         end if
       elseif (present(group_index)) then
          if (group_index <= size(self%clasg, dim=1) - 1) then
             call self%clasg(group_index)%add(pref=pref, cla=cla); self%error = self%clasg(group_index)%error
-         endif
-      endif
+         end if
+      end if
       if (present(error)) error = self%error
-   endsubroutine add
+   end subroutine add
 
    subroutine check(self, pref, error)
       !< Check data consistency.
@@ -328,10 +328,10 @@ contains
          if (g > 0) then
             if (self%clasg(g)%m_exclude /= '') then
                if (self%is_defined_group(group=self%clasg(g)%m_exclude, g=gg)) self%clasg(gg)%m_exclude = self%clasg(g)%group
-            endif
-         endif
-      enddo
-   endsubroutine check
+            end if
+         end if
+      end do
+   end subroutine check
 
    subroutine check_m_exclusive(self, pref)
       !< Check if two mutually exclusive CLAs group have been called.
@@ -347,11 +347,11 @@ contains
                   call self%clasg(g)%raise_error_m_exclude(pref=pref)
                   self%error = self%clasg(g)%error
                   exit
-               endif
-            endif
-         endif
-      enddo
-   endsubroutine check_m_exclusive
+               end if
+            end if
+         end if
+      end do
+   end subroutine check_m_exclusive
 
    function is_passed(self, group, switch, position)
       !< Check if a CLA has been passed.
@@ -368,17 +368,17 @@ contains
             is_passed = self%clasg(0)%is_passed(switch=switch)
          elseif (present(position)) then
             is_passed = self%clasg(0)%is_passed(position=position)
-         endif
+         end if
       else
          if (self%is_defined_group(group=group, g=g)) then
             if (present(switch)) then
                is_passed = self%clasg(g)%is_passed(switch=switch)
             elseif (present(position)) then
                is_passed = self%clasg(g)%is_passed(position=position)
-            endif
-         endif
-      endif
-   endfunction is_passed
+            end if
+         end if
+      end if
+   end function is_passed
 
    function is_defined_group(self, group, g) result(defined)
       !< Check if a CLAs group has been defined.
@@ -394,9 +394,9 @@ contains
          ggg = gg
          if (allocated(self%clasg(gg)%group)) defined = (self%clasg(gg)%group == group)
          if (defined) exit
-      enddo
+      end do
       if (present(g)) g = ggg
-   endfunction is_defined_group
+   end function is_defined_group
 
    function is_called_group(self, group) result(called)
       !< Check if a CLAs group has been run.
@@ -407,7 +407,7 @@ contains
 
       called = .false.
       if (self%is_defined_group(group=group, g=g)) called = self%clasg(g)%is_called
-   endfunction is_called_group
+   end function is_called_group
 
    function is_defined(self, switch, group)
       !< Check if a CLA has been defined.
@@ -422,8 +422,8 @@ contains
          is_defined = self%clasg(0)%is_defined(switch=switch)
       else
          if (self%is_defined_group(group=group, g=g)) is_defined = self%clasg(g)%is_defined(switch=switch)
-      endif
-   endfunction is_defined
+      end if
+   end function is_defined
 
    elemental function is_parsed(self)
       !< Check if CLI has been parsed.
@@ -431,7 +431,7 @@ contains
       logical                                   :: is_parsed !< Parsed status.
 
       is_parsed = self%is_parsed_
-   endfunction is_parsed
+   end function is_parsed
 
    subroutine parse(self, pref, args, error)
       !< Parse Command Line Interfaces by means of a previously initialized CLAs groups list.
@@ -473,8 +473,8 @@ contains
                              required=.false., &
                              def='', &
                              act='print_version')
-         enddo
-      endif
+         end do
+      end if
 
       ! add hidden CLA '--' for getting the rid of eventual trailing CLAs garbage
       do g = 0, size(self%clasg, dim=1) - 1
@@ -487,21 +487,21 @@ contains
                           nargs='*', &
                           def='', &
                           act='store')
-      enddo
+      end do
 
       ! parse passed CLAs grouping in indexes
       if (present(args)) then
          call self%get_args(args=args, ai=ai)
       else
          call self%get_args(ai=ai)
-      endif
+      end if
 
       ! check CLI consistency
       call self%check(pref=pref)
       if (self%error > 0) then
          if (present(error)) error = self%error
          return
-      endif
+      end if
 
       ! parse CLI
       do g = 0, size(ai, dim=1) - 1
@@ -509,14 +509,14 @@ contains
             call self%clasg(g)%parse(args=self%args(ai(g, 1):ai(g, 2)), pref=pref)
          else
             call self%clasg(g)%sanitize_defaults
-         endif
+         end if
          self%error = self%clasg(g)%error
          if (self%error /= 0) exit
-      enddo
+      end do
       if (self%error > 0) then
          if (present(error)) error = self%error
          return
-      endif
+      end if
 
       ! trap the special cases of version/help printing
       if (self%error == STATUS_PRINT_V) then
@@ -525,18 +525,18 @@ contains
       elseif (self%error == STATUS_PRINT_H) then
          write (self%usage_lun, '(A)') self%usage(pref=pref, g=g)
          stop
-      endif
+      end if
 
       ! check if all required CLAs have been passed
       do g = 0, size(ai, dim=1) - 1
          call self%clasg(g)%is_required_passed(pref=pref)
          self%error = self%clasg(g)%error
          if (self%error > 0) exit
-      enddo
+      end do
       if (self%error > 0) then
          if (present(error)) error = self%error
          return
-      endif
+      end if
 
       ! check mutually exclusive interaction
       call self%check_m_exclusive(pref=pref)
@@ -544,7 +544,7 @@ contains
       self%is_parsed_ = .true.
 
       if (present(error)) error = self%error
-   endsubroutine parse
+   end subroutine parse
 
    subroutine get_clasg_indexes(self, ai)
       !< Get the argument indexes of CLAs groups defined parsing the actual passed CLAs.
@@ -577,22 +577,22 @@ contains
                      exit
                   else
                      ai(g, 2) = aa
-                  endif
-               enddo
+                  end if
+               end do
             elseif (.not. found) then
                ai(0, 2) = a
-            endif
-         enddo search_named
+            end if
+         end do search_named
          if (ai(0, 2) > 0) then
             ai(0, 1) = 1
             self%clasg(0)%is_called = .true.
          elseif (all(ai == 0)) then
             self%clasg(0)%is_called = .true.
-         endif
+         end if
       else
          self%clasg(0)%is_called = .true.
-      endif
-   endsubroutine get_clasg_indexes
+      end if
+   end subroutine get_clasg_indexes
 
    subroutine get_args_from_string(self, args, ai)
       !< Get CLAs from string.
@@ -619,7 +619,7 @@ contains
          argsd = sanitize_args(argsin=argsd, delimiter="'")
       elseif (index(args, '"') > 0) then
          argsd = sanitize_args(argsin=argsd, delimiter='"')
-      endif
+      end if
 
       ! tokenize arguments string; the previously sanitized white spaces inside tokens are restored
       call tokenize(strin=argsd, delimiter=' ', toks=toks, Nt=Nt)
@@ -629,9 +629,9 @@ contains
             Na = Na + 1
             do c = 1, len(toks(t))
                if (toks(t) (c:c) == "'") toks(t) (c:c) = " "
-            enddo
-         endif
-      enddo find_number_of_valid_arguments
+            end do
+         end if
+      end do find_number_of_valid_arguments
 
       if (Na > 0) then
          ! allocate CLI arguments list
@@ -641,7 +641,7 @@ contains
          length = 0
          find_longest_arg: do t = 1, Nt
             if (trim(adjustl(toks(t))) /= '') length = max(length, len_trim(adjustl(toks(t))))
-         enddo find_longest_arg
+         end do find_longest_arg
          allocate (character(length):: self%args(1:Na))
 #endif
 
@@ -651,9 +651,9 @@ contains
             if (trim(adjustl(toks(t))) /= '') then
                a = a + 1
                self%args(a) = trim(adjustl(toks(t)))
-            endif
-         enddo get_args
-      endif
+            end if
+         end do get_args
+      end if
 
       call self%get_clasg_indexes(ai=ai)
    contains
@@ -677,15 +677,15 @@ contains
          do t = 2, Nt, 2
             do tt = 1, len_trim(adjustl(tok(t)))
                if (tok(t) (tt:tt) == ' ') tok(t) (tt:tt) = "'"
-            enddo
-         enddo
+            end do
+         end do
          sanitized = ''
          do t = 1, Nt
             sanitized = trim(sanitized)//" "//trim(adjustl(tok(t)))
-         enddo
+         end do
          sanitized = trim(adjustl(sanitized))
-      endfunction sanitize_args
-   endsubroutine get_args_from_string
+      end function sanitize_args
+   end subroutine get_args_from_string
 
    subroutine get_args_from_invocation(self, ai)
       !< Get CLAs from CLI invocation.
@@ -706,17 +706,17 @@ contains
          find_longest_arg: do a = 1, Na
             call get_command_argument(a, switch)
             aa = max(aa, len_trim(switch))
-         enddo find_longest_arg
+         end do find_longest_arg
          allocate (character(aa):: self%args(1:Na))
 #endif
          get_args: do a = 1, Na
             call get_command_argument(a, switch)
             self%args(a) = trim(adjustl(switch))
-         enddo get_args
-      endif
+         end do get_args
+      end if
 
       call self%get_clasg_indexes(ai=ai)
-   endsubroutine get_args_from_invocation
+   end subroutine get_args_from_invocation
 
    subroutine get_cla(self, val, pref, args, group, switch, position, error)
       !< Get CLA (single) value from CLAs list parsed.
@@ -737,14 +737,14 @@ contains
       if (.not. self%is_parsed_) then
          call self%parse(pref=pref, args=args, error=error)
          if (self%error /= 0) return
-      endif
+      end if
       if (present(group)) then
          if (.not. self%is_defined_group(group=group, g=g)) then
             call self%errored(pref=pref, error=ERROR_MISSING_GROUP, group=group)
-         endif
+         end if
       else
          g = 0
-      endif
+      end if
       if (self%error == 0) then
          if (present(switch)) then
             ! search for the CLA corresponding to switch
@@ -754,25 +754,25 @@ contains
                   if ((self%clasg(g)%cla(a)%switch == switch) .or. (self%clasg(g)%cla(a)%switch_ab == switch)) then
                      found = .true.
                      exit
-                  endif
-               endif
-            enddo
+                  end if
+               end if
+            end do
             if (.not. found) then
                call self%errored(pref=pref, error=ERROR_MISSING_CLA, switch=switch)
             else
                call self%clasg(g)%cla(a)%get(pref=pref, val=val); self%error = self%clasg(g)%cla(a)%error
-            endif
+            end if
          elseif (present(position)) then
             call self%clasg(g)%cla(position)%get(pref=pref, val=val); self%error = self%clasg(g)%cla(position)%error
          else
             call self%errored(pref=pref, error=ERROR_MISSING_SELECTION_CLA)
-         endif
-      endif
+         end if
+      end if
       if (self%error == 0 .and. (.not. self%clasg(g)%is_called)) then
          ! TODO warn (if liked) for non invoked group querying
-      endif
+      end if
       if (present(error)) error = self%error
-   endsubroutine get_cla
+   end subroutine get_cla
 
    subroutine get_cla_list(self, val, pref, args, group, switch, position, error)
       !< Get CLA multiple values from CLAs list parsed.
@@ -793,14 +793,14 @@ contains
       if (.not. self%is_parsed_) then
          call self%parse(pref=pref, args=args, error=error)
          if (self%error /= 0) return
-      endif
+      end if
       if (present(group)) then
          if (.not. self%is_defined_group(group=group, g=g)) then
             call self%errored(pref=pref, error=ERROR_MISSING_GROUP, group=group)
-         endif
+         end if
       else
          g = 0
-      endif
+      end if
       if (present(switch)) then
          ! search for the CLA corresponding to switch
          found = .false.
@@ -809,21 +809,21 @@ contains
                if ((self%clasg(g)%cla(a)%switch == switch) .or. (self%clasg(g)%cla(a)%switch_ab == switch)) then
                   found = .true.
                   exit
-               endif
-            endif
-         enddo
+               end if
+            end if
+         end do
          if (.not. found) then
             call self%errored(pref=pref, error=ERROR_MISSING_CLA, switch=switch)
          else
             call self%clasg(g)%cla(a)%get(pref=pref, val=val); self%error = self%clasg(g)%cla(a)%error
-         endif
+         end if
       elseif (present(position)) then
          call self%clasg(g)%cla(position)%get(pref=pref, val=val); self%error = error
       else
          call self%errored(pref=pref, error=ERROR_MISSING_SELECTION_CLA)
-      endif
+      end if
       if (present(error)) error = self%error
-   endsubroutine get_cla_list
+   end subroutine get_cla_list
 
    subroutine get_cla_list_varying_R16P(self, val, pref, args, group, switch, position, error)
       !< Get CLA multiple values from CLAs list parsed with varying size list, real(R16P).
@@ -846,14 +846,14 @@ contains
       if (.not. self%is_parsed_) then
          call self%parse(pref=pref, args=args, error=error)
          if (self%error /= 0) return
-      endif
+      end if
       if (present(group)) then
          if (.not. self%is_defined_group(group=group, g=g)) then
             call self%errored(pref=pref, error=ERROR_MISSING_GROUP, group=group)
-         endif
+         end if
       else
          g = 0
-      endif
+      end if
       if (present(switch)) then
          ! search for the CLA corresponding to switch
          found = .false.
@@ -862,21 +862,21 @@ contains
                if ((self%clasg(g)%cla(a)%switch == switch) .or. (self%clasg(g)%cla(a)%switch_ab == switch)) then
                   found = .true.
                   exit
-               endif
-            endif
-         enddo
+               end if
+            end if
+         end do
          if (.not. found) then
             call self%errored(pref=pref, error=ERROR_MISSING_CLA, switch=switch)
          else
             call self%clasg(g)%cla(a)%get_varying(pref=pref, val=val); self%error = self%clasg(g)%cla(a)%error
-         endif
+         end if
       elseif (present(position)) then
          call self%clasg(g)%cla(position)%get_varying(pref=pref, val=val); self%error = error
       else
          call self%errored(pref=pref, error=ERROR_MISSING_SELECTION_CLA)
-      endif
+      end if
       if (present(error)) error = self%error
-   endsubroutine get_cla_list_varying_R16P
+   end subroutine get_cla_list_varying_R16P
 
    subroutine get_cla_list_varying_R8P(self, val, pref, args, group, switch, position, error)
       !< Get CLA multiple values from CLAs list parsed with varying size list, real(R8P).
@@ -899,14 +899,14 @@ contains
       if (.not. self%is_parsed_) then
          call self%parse(pref=pref, args=args, error=error)
          if (self%error /= 0) return
-      endif
+      end if
       if (present(group)) then
          if (.not. self%is_defined_group(group=group, g=g)) then
             call self%errored(pref=pref, error=ERROR_MISSING_GROUP, group=group)
-         endif
+         end if
       else
          g = 0
-      endif
+      end if
       if (present(switch)) then
          ! search for the CLA corresponding to switch
          found = .false.
@@ -915,21 +915,21 @@ contains
                if ((self%clasg(g)%cla(a)%switch == switch) .or. (self%clasg(g)%cla(a)%switch_ab == switch)) then
                   found = .true.
                   exit
-               endif
-            endif
-         enddo
+               end if
+            end if
+         end do
          if (.not. found) then
             call self%errored(pref=pref, error=ERROR_MISSING_CLA, switch=switch)
          else
             call self%clasg(g)%cla(a)%get_varying(pref=pref, val=val); self%error = self%clasg(g)%cla(a)%error
-         endif
+         end if
       elseif (present(position)) then
          call self%clasg(g)%cla(position)%get_varying(pref=pref, val=val); self%error = error
       else
          call self%errored(pref=pref, error=ERROR_MISSING_SELECTION_CLA)
-      endif
+      end if
       if (present(error)) error = self%error
-   endsubroutine get_cla_list_varying_R8P
+   end subroutine get_cla_list_varying_R8P
 
    subroutine get_cla_list_varying_R4P(self, val, pref, args, group, switch, position, error)
       !< Get CLA multiple values from CLAs list parsed with varying size list, real(R4P).
@@ -952,14 +952,14 @@ contains
       if (.not. self%is_parsed_) then
          call self%parse(pref=pref, args=args, error=error)
          if (self%error /= 0) return
-      endif
+      end if
       if (present(group)) then
          if (.not. self%is_defined_group(group=group, g=g)) then
             call self%errored(pref=pref, error=ERROR_MISSING_GROUP, group=group)
-         endif
+         end if
       else
          g = 0
-      endif
+      end if
       if (present(switch)) then
          ! search for the CLA corresponding to switch
          found = .false.
@@ -968,21 +968,21 @@ contains
                if ((self%clasg(g)%cla(a)%switch == switch) .or. (self%clasg(g)%cla(a)%switch_ab == switch)) then
                   found = .true.
                   exit
-               endif
-            endif
-         enddo
+               end if
+            end if
+         end do
          if (.not. found) then
             call self%errored(pref=pref, error=ERROR_MISSING_CLA, switch=switch)
          else
             call self%clasg(g)%cla(a)%get_varying(pref=pref, val=val); self%error = self%clasg(g)%cla(a)%error
-         endif
+         end if
       elseif (present(position)) then
          call self%clasg(g)%cla(position)%get_varying(pref=pref, val=val); self%error = error
       else
          call self%errored(pref=pref, error=ERROR_MISSING_SELECTION_CLA)
-      endif
+      end if
       if (present(error)) error = self%error
-   endsubroutine get_cla_list_varying_R4P
+   end subroutine get_cla_list_varying_R4P
 
    subroutine get_cla_list_varying_I8P(self, val, pref, args, group, switch, position, error)
       !< Get CLA multiple values from CLAs list parsed with varying size list, integer(I8P).
@@ -1005,14 +1005,14 @@ contains
       if (.not. self%is_parsed_) then
          call self%parse(pref=pref, args=args, error=error)
          if (self%error /= 0) return
-      endif
+      end if
       if (present(group)) then
          if (.not. self%is_defined_group(group=group, g=g)) then
             call self%errored(pref=pref, error=ERROR_MISSING_GROUP, group=group)
-         endif
+         end if
       else
          g = 0
-      endif
+      end if
       if (present(switch)) then
          ! search for the CLA corresponding to switch
          found = .false.
@@ -1021,21 +1021,21 @@ contains
                if ((self%clasg(g)%cla(a)%switch == switch) .or. (self%clasg(g)%cla(a)%switch_ab == switch)) then
                   found = .true.
                   exit
-               endif
-            endif
-         enddo
+               end if
+            end if
+         end do
          if (.not. found) then
             call self%errored(pref=pref, error=ERROR_MISSING_CLA, switch=switch)
          else
             call self%clasg(g)%cla(a)%get_varying(pref=pref, val=val); self%error = self%clasg(g)%cla(a)%error
-         endif
+         end if
       elseif (present(position)) then
          call self%clasg(g)%cla(position)%get_varying(pref=pref, val=val); self%error = error
       else
          call self%errored(pref=pref, error=ERROR_MISSING_SELECTION_CLA)
-      endif
+      end if
       if (present(error)) error = self%error
-   endsubroutine get_cla_list_varying_I8P
+   end subroutine get_cla_list_varying_I8P
 
    subroutine get_cla_list_varying_I4P(self, val, pref, args, group, switch, position, error)
       !< Get CLA multiple values from CLAs list parsed with varying size list, integer(I4P).
@@ -1058,14 +1058,14 @@ contains
       if (.not. self%is_parsed_) then
          call self%parse(pref=pref, args=args, error=error)
          if (self%error /= 0) return
-      endif
+      end if
       if (present(group)) then
          if (.not. self%is_defined_group(group=group, g=g)) then
             call self%errored(pref=pref, error=ERROR_MISSING_GROUP, group=group)
-         endif
+         end if
       else
          g = 0
-      endif
+      end if
       if (present(switch)) then
          ! search for the CLA corresponding to switch
          found = .false.
@@ -1074,21 +1074,21 @@ contains
                if ((self%clasg(g)%cla(a)%switch == switch) .or. (self%clasg(g)%cla(a)%switch_ab == switch)) then
                   found = .true.
                   exit
-               endif
-            endif
-         enddo
+               end if
+            end if
+         end do
          if (.not. found) then
             call self%errored(pref=pref, error=ERROR_MISSING_CLA, switch=switch)
          else
             call self%clasg(g)%cla(a)%get_varying(pref=pref, val=val); self%error = self%clasg(g)%cla(a)%error
-         endif
+         end if
       elseif (present(position)) then
          call self%clasg(g)%cla(position)%get_varying(pref=pref, val=val); self%error = error
       else
          call self%errored(pref=pref, error=ERROR_MISSING_SELECTION_CLA)
-      endif
+      end if
       if (present(error)) error = self%error
-   endsubroutine get_cla_list_varying_I4P
+   end subroutine get_cla_list_varying_I4P
 
    subroutine get_cla_list_varying_I2P(self, val, pref, args, group, switch, position, error)
       !< Get CLA multiple values from CLAs list parsed with varying size list, integer(I2P).
@@ -1111,14 +1111,14 @@ contains
       if (.not. self%is_parsed_) then
          call self%parse(pref=pref, args=args, error=error)
          if (self%error /= 0) return
-      endif
+      end if
       if (present(group)) then
          if (.not. self%is_defined_group(group=group, g=g)) then
             call self%errored(pref=pref, error=ERROR_MISSING_GROUP, group=group)
-         endif
+         end if
       else
          g = 0
-      endif
+      end if
       if (present(switch)) then
          ! search for the CLA corresponding to switch
          found = .false.
@@ -1127,21 +1127,21 @@ contains
                if ((self%clasg(g)%cla(a)%switch == switch) .or. (self%clasg(g)%cla(a)%switch_ab == switch)) then
                   found = .true.
                   exit
-               endif
-            endif
-         enddo
+               end if
+            end if
+         end do
          if (.not. found) then
             call self%errored(pref=pref, error=ERROR_MISSING_CLA, switch=switch)
          else
             call self%clasg(g)%cla(a)%get_varying(pref=pref, val=val); self%error = self%clasg(g)%cla(a)%error
-         endif
+         end if
       elseif (present(position)) then
          call self%clasg(g)%cla(position)%get_varying(pref=pref, val=val); self%error = error
       else
          call self%errored(pref=pref, error=ERROR_MISSING_SELECTION_CLA)
-      endif
+      end if
       if (present(error)) error = self%error
-   endsubroutine get_cla_list_varying_I2P
+   end subroutine get_cla_list_varying_I2P
 
    subroutine get_cla_list_varying_I1P(self, val, pref, args, group, switch, position, error)
       !< Get CLA multiple values from CLAs list parsed with varying size list, integer(I1P).
@@ -1164,14 +1164,14 @@ contains
       if (.not. self%is_parsed_) then
          call self%parse(pref=pref, args=args, error=error)
          if (self%error /= 0) return
-      endif
+      end if
       if (present(group)) then
          if (.not. self%is_defined_group(group=group, g=g)) then
             call self%errored(pref=pref, error=ERROR_MISSING_GROUP, group=group)
-         endif
+         end if
       else
          g = 0
-      endif
+      end if
       if (present(switch)) then
          ! search for the CLA corresponding to switch
          found = .false.
@@ -1180,21 +1180,21 @@ contains
                if ((self%clasg(g)%cla(a)%switch == switch) .or. (self%clasg(g)%cla(a)%switch_ab == switch)) then
                   found = .true.
                   exit
-               endif
-            endif
-         enddo
+               end if
+            end if
+         end do
          if (.not. found) then
             call self%errored(pref=pref, error=ERROR_MISSING_CLA, switch=switch)
          else
             call self%clasg(g)%cla(a)%get_varying(pref=pref, val=val); self%error = self%clasg(g)%cla(a)%error
-         endif
+         end if
       elseif (present(position)) then
          call self%clasg(g)%cla(position)%get_varying(pref=pref, val=val); self%error = error
       else
          call self%errored(pref=pref, error=ERROR_MISSING_SELECTION_CLA)
-      endif
+      end if
       if (present(error)) error = self%error
-   endsubroutine get_cla_list_varying_I1P
+   end subroutine get_cla_list_varying_I1P
 
    subroutine get_cla_list_varying_logical(self, val, pref, args, group, switch, position, error)
       !< Get CLA multiple values from CLAs list parsed with varying size list, logical.
@@ -1217,14 +1217,14 @@ contains
       if (.not. self%is_parsed_) then
          call self%parse(pref=pref, args=args, error=error)
          if (self%error /= 0) return
-      endif
+      end if
       if (present(group)) then
          if (.not. self%is_defined_group(group=group, g=g)) then
             call self%errored(pref=pref, error=ERROR_MISSING_GROUP, group=group)
-         endif
+         end if
       else
          g = 0
-      endif
+      end if
       if (present(switch)) then
          ! search for the CLA corresponding to switch
          found = .false.
@@ -1233,21 +1233,21 @@ contains
                if ((self%clasg(g)%cla(a)%switch == switch) .or. (self%clasg(g)%cla(a)%switch_ab == switch)) then
                   found = .true.
                   exit
-               endif
-            endif
-         enddo
+               end if
+            end if
+         end do
          if (.not. found) then
             call self%errored(pref=pref, error=ERROR_MISSING_CLA, switch=switch)
          else
             call self%clasg(g)%cla(a)%get_varying(pref=pref, val=val); self%error = self%clasg(g)%cla(a)%error
-         endif
+         end if
       elseif (present(position)) then
          call self%clasg(g)%cla(position)%get_varying(pref=pref, val=val); self%error = error
       else
          call self%errored(pref=pref, error=ERROR_MISSING_SELECTION_CLA)
-      endif
+      end if
       if (present(error)) error = self%error
-   endsubroutine get_cla_list_varying_logical
+   end subroutine get_cla_list_varying_logical
 
    subroutine get_cla_list_varying_char(self, val, pref, args, group, switch, position, error)
       !< Get CLA multiple values from CLAs list parsed with varying size list, character.
@@ -1270,14 +1270,14 @@ contains
       if (.not. self%is_parsed_) then
          call self%parse(pref=pref, args=args, error=error)
          if (self%error /= 0) return
-      endif
+      end if
       if (present(group)) then
          if (.not. self%is_defined_group(group=group, g=g)) then
             call self%errored(pref=pref, error=ERROR_MISSING_GROUP, group=group)
-         endif
+         end if
       else
          g = 0
-      endif
+      end if
       if (present(switch)) then
          ! search for the CLA corresponding to switch
          found = .false.
@@ -1286,21 +1286,21 @@ contains
                if ((self%clasg(g)%cla(a)%switch == switch) .or. (self%clasg(g)%cla(a)%switch_ab == switch)) then
                   found = .true.
                   exit
-               endif
-            endif
-         enddo
+               end if
+            end if
+         end do
          if (.not. found) then
             call self%errored(pref=pref, error=ERROR_MISSING_CLA, switch=switch)
          else
             call self%clasg(g)%cla(a)%get_varying(pref=pref, val=val); self%error = self%clasg(g)%cla(a)%error
-         endif
+         end if
       elseif (present(position)) then
          call self%clasg(g)%cla(position)%get_varying(pref=pref, val=val); self%error = error
       else
          call self%errored(pref=pref, error=ERROR_MISSING_SELECTION_CLA)
-      endif
+      end if
       if (present(error)) error = self%error
-   endsubroutine get_cla_list_varying_char
+   end subroutine get_cla_list_varying_char
 
    function usage(self, g, pref, no_header, no_examples, no_epilog, markdown) result(usaged)
       !< Print correct usage of CLI.
@@ -1333,28 +1333,28 @@ contains
          else
             usaged = prefd//self%help//self%progname//' '//self%signature()
             if (self%description /= '') usaged = usaged//new_line('a')//new_line('a')//prefd//self%description
-         endif
+         end if
      if (self%clasg(0)%Na > 0) usaged = usaged//new_line('a')//self%clasg(0)%usage(pref=prefd, no_header=.true., markdown=markdownd)
          if (size(self%clasg, dim=1) > 1) then
             usaged = usaged//new_line('a')//new_line('a')//prefd//'Commands:'
             do gi = 1, size(self%clasg, dim=1) - 1
                usaged = usaged//new_line('a')//prefd//'  '//self%clasg(gi)%group
                usaged = usaged//new_line('a')//prefd//repeat(' ', 10)//self%clasg(gi)%description
-            enddo
+            end do
             usaged = usaged//new_line('a')//new_line('a')//prefd//'For more detailed commands help try:'
             do gi = 1, size(self%clasg, dim=1) - 1
                usaged = usaged//new_line('a')//prefd//'  '//self%progname//' '//self%clasg(gi)%group//' -h,--help'
-            enddo
-         endif
-      endif
+            end do
+         end if
+      end if
       if (allocated(self%examples) .and. (.not. no_examplesd)) then
          usaged = usaged//new_line('a')//new_line('a')//prefd//'Examples:'
          do e = 1, size(self%examples, dim=1)
             usaged = usaged//new_line('a')//prefd//'   '//trim(self%examples(e))
-         enddo
-      endif
+         end do
+      end if
       if (self%epilog /= '' .and. (.not. no_epilogd)) usaged = usaged//new_line('a')//prefd//self%epilog
-   endfunction usage
+   end function usage
 
    function signature(self)
       !< Get signature.
@@ -1367,10 +1367,10 @@ contains
          signature = signature//' {'//self%clasg(1)%group
          do g = 2, size(self%clasg, dim=1) - 1
             signature = signature//','//self%clasg(g)%group
-         enddo
+         end do
          signature = signature//'} ...'
-      endif
-   endfunction signature
+      end if
+   end function signature
 
    subroutine print_usage(self, pref)
       !< Print correct usage.
@@ -1378,7 +1378,7 @@ contains
       character(*), optional, intent(in) :: pref  !< Prefixing string.
 
       write (self%usage_lun, '(A)') self%usage(pref=pref, g=0)
-   endsubroutine print_usage
+   end subroutine print_usage
 
    subroutine save_man_page(self, man_file, error)
       !< Save man page build on the CLI.
@@ -1413,7 +1413,7 @@ contains
       if (self%clasg(0)%Na > 0) then
          man = man//new_line('a')//'.SH OPTIONS'
          man = man//new_line('a')//self%usage(no_header=.true., no_examples=.true., no_epilog=.true., g=0)
-      endif
+      end if
       if (allocated(self%examples)) then
          man = man//new_line('a')//'.SH EXAMPLES'
          man = man//new_line('a')//'.PP'
@@ -1421,11 +1421,11 @@ contains
          man = man//new_line('a')//'.RS'
          do e = 1, size(self%examples, dim=1)
             man = man//new_line('a')//trim(self%examples(e))
-         enddo
+         end do
          man = man//new_line('a')//'.RE'
          man = man//new_line('a')//'.fi'
          man = man//new_line('a')//'.PP'
-      endif
+      end if
       if (self%authors /= '') man = man//new_line('a')//'.SH AUTHOR'//new_line('a')//self%authors
       if (self%license /= '') man = man//new_line('a')//'.SH COPYRIGHT'//new_line('a')//self%license
       open (newunit=u, file=trim(adjustl(man_file)))
@@ -1433,9 +1433,9 @@ contains
          write (u, "(A)", iostat=error) man
       else
          write (u, "(A)") man
-      endif
+      end if
       close (u)
-   endsubroutine save_man_page
+   end subroutine save_man_page
 
    subroutine save_usage_to_markdown(self, markdown_file, error)
       !< Save the CLI as a markdown page, for inclusion into the documentation.
@@ -1466,22 +1466,22 @@ contains
       if (self%clasg(0)%Na > 0) then
          man = man//new_line('a')//new_line('a')//'### Command line options:'
    man = man//new_line('a')//new_line('a')//self%usage(no_header=.true., no_examples=.true., no_epilog=.true., g=0, markdown=.true.)
-      endif
+      end if
       if (allocated(self%examples)) then
          man = man//new_line('a')//'### Examples'
          do e = 1, size(self%examples, dim=1)
             man = man//new_line('a')
             man = man//new_line('a')//'`'//trim(self%examples(e))//'` '
-         enddo
-      endif
+         end do
+      end if
       open (newunit=u, file=trim(adjustl(markdown_file)))
       if (present(error)) then
          write (u, "(A)", iostat=error) man
       else
          write (u, "(A)") man
-      endif
+      end if
       close (u)
-   endsubroutine save_usage_to_markdown
+   end subroutine save_usage_to_markdown
 
    ! private methods
    subroutine errored(self, error, pref, group, switch)
@@ -1507,11 +1507,11 @@ contains
          case (ERROR_TOO_FEW_CLAS)
             ! self%error_message = prefd//': too few arguments ('//trim(str(.true.,Na))//')'//&
             ! ' respect the required ('//trim(str(.true.,self%Na_required))//')'
-         endselect
+         end select
          write (self%error_lun, '(A)')
          call self%print_error_message
-      endif
-   endsubroutine errored
+      end if
+   end subroutine errored
 
    elemental subroutine cli_assign_cli(lhs, rhs)
       !< Assignment operator.
@@ -1524,12 +1524,12 @@ contains
       if (allocated(rhs%clasg)) lhs%clasg = rhs%clasg
       if (allocated(rhs%examples)) lhs%examples = rhs%examples
       lhs%disable_hv = rhs%disable_hv
-   endsubroutine cli_assign_cli
+   end subroutine cli_assign_cli
 
    elemental subroutine finalize(self)
       !< Free dynamic memory when finalizing.
       type(command_line_interface), intent(inout) :: self !< CLI data.
 
       call self%free
-   endsubroutine finalize
-endmodule flap_command_line_interface_t
+   end subroutine finalize
+end module flap_command_line_interface_t

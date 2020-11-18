@@ -55,7 +55,7 @@ program test_nested
    if (error /= 0) then
       print '(A)', 'Error code: '//trim(str(n=error))
       stop
-   endif
+   end if
 
 ! use Command Line Interface data to trigger program behaviour
    call cli%get(switch='-a', val=authors_print, error=error); if (error /= 0) stop
@@ -71,7 +71,7 @@ program test_nested
       print '(A)', 'tag current branch with message "'//trim(message)//'"'
    else
       print '(A)', 'cowardly you are doing nothing... try at least "-h" option!'
-   endif
+   end if
    stop
 !-----------------------------------------------------------------------------------------------------------------------------------
-endprogram test_nested
+end program test_nested

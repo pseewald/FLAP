@@ -28,4 +28,4 @@ program flap_test_minimal
    call cli%get(switch='-s', val=string, error=error); if (error /= 0) stop
    print '(A)', cli%progname//' has been called with the following argument:'
    print '(A)', 'String = '//trim(adjustl(string))
-endprogram flap_test_minimal
+end program flap_test_minimal

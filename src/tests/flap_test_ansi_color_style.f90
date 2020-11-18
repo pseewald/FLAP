@@ -22,4 +22,4 @@ program flap_test_ansi_color_style
    print '(A)', 'string = '//trim(adjustl(string))
    call cli%get(switch='-opt', val=string, error=error); if (error /= 0) stop
    print '(A)', 'optional = '//trim(adjustl(string))
-endprogram flap_test_ansi_color_style
+end program flap_test_ansi_color_style

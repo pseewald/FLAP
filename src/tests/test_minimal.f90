@@ -34,4 +34,4 @@ program test_minimal
    print '(A)', 'String = '//trim(adjustl(string))
    stop
 !-----------------------------------------------------------------------------------------------------------------------------------
-endprogram test_minimal
+end program test_minimal

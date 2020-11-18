@@ -77,5 +77,5 @@ call cli%add(switch='--integer_ex',switch_ab='-ie',help='Exclusive integer input
    print '(A)', 'Integer list inputs:'
    do l = 1, 3
       print '(A)', 'Input('//trim(str(l, .true.))//') = '//trim(str(n=ilist(l)))
-   enddo
-endprogram flap_test_string
+   end do
+end program flap_test_string
